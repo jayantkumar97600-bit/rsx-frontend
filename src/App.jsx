@@ -3430,6 +3430,7 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
   const [resultsHistory, setResultsHistory] = useState([]); // last 50 periods
   const [showResultModal, setShowResultModal] = useState(false);
   const [resultModalData, setResultModalData] = useState(null);
+  const [showLockModal, setShowLockModal] = useState(false);
 
   const beepAudioRef = useRef(null);
 
@@ -3541,93 +3542,104 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
   }, [gameType]);
 
   async function handleRoundEnd() {
-    if (!currentPeriod) {
-      resetPeriodForGameType(gameType);
+  if (!currentPeriod) {
+    resetPeriodForGameType(gameType);
+    return;
+  }
+
+  try {
+    setIsSettling(true);
+    setMessage(`Settling bets for period ${currentPeriod}`);
+    setMessageType("info");
+
+    const res = await fetch(`${API_BASE}/api/game/settle`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ gameType, period: currentPeriod }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setMessage(data.message || "Error while settling bets.");
+      setMessageType("info");
       return;
     }
 
-    try {
-      setIsSettling(true);
-      setMessage(`Settling bets for period ${currentPeriod}`);
+    // 🔧 yahan change
+    const hadBets =
+      data.hadBets === false
+        ? false
+        : true;
+
+    if (!hadBets) {
+      setMessage("No bets placed in this round from your account.");
       setMessageType("info");
-
-      const res = await fetch(`${API_BASE}/api/game/settle`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ gameType, period: currentPeriod }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setMessage(data.message || "Error while settling bets.");
-        setMessageType("info");
-        return;
-      }
-
-      const hadBets = data.hadBets === true;
-
-      if (!hadBets || data.resultNumber === undefined) {
-        setMessage("No bets placed in this round from your account.");
-        setMessageType("info");
-        return;
-      }
-
-      const newBal =
-        typeof data.balance === "number" ? data.balance : balance;
-
-      setBalance(newBal);
-      onUserUpdate({ user, balance: newBal });
-      syncBalance(newBal);
-
-      const result = {
-        period: currentPeriod,
-        number: data.resultNumber,
-        color: data.resultColor,
-        size: data.size,
-      };
-
-      setResultsHistory((prev) => [result, ...prev].slice(0, 50));
-
-      const isWinRound = (data.totalProfit || 0) > 0;
-
-      if (isWinRound) {
-        setMessage(
-          `WIN • Result ${data.resultNumber} (${data.resultColor}, ${data.size}). Net return ₹${data.totalProfit}.`
-        );
-        setMessageType("win");
-      } else {
-        setMessage(
-          `Better luck next time • Result ${data.resultNumber} (${data.resultColor}, ${data.size}).`
-        );
-        setMessageType("loss");
-      }
-
-      setResultModalData({
-        status: isWinRound ? "win" : "loss",
-        amount: data.totalProfit || 0,
-        resultNumber: data.resultNumber,
-        resultColor: data.resultColor,
-        size: data.size,
-        period: currentPeriod,
-      });
-      setShowResultModal(true);
-      setTimeout(() => setShowResultModal(false), 3000);
-    } catch (e) {
-      console.error("Settle error", e);
-      setMessage("Network error while settling bets.");
-      setMessageType("info");
-    } finally {
-      setSelectedBetKind(null);
-      setSelectedBetValue(null);
-      setSelectedAmount(null);
-      resetPeriodForGameType(gameType);
-      setIsSettling(false);
+      return;
     }
+
+    if (data.resultNumber === undefined) {
+      setMessage("Result not available from server.");
+      setMessageType("info");
+      return;
+    }
+
+    const newBal =
+      typeof data.balance === "number" ? data.balance : balance;
+
+    setBalance(newBal);
+    onUserUpdate({ user, balance: newBal });
+    syncBalance(newBal);
+
+    const result = {
+      period: currentPeriod,
+      number: data.resultNumber,
+      color: data.resultColor,
+      size: data.size,
+    };
+
+    setResultsHistory((prev) => [result, ...prev].slice(0, 50));
+
+    const isWinRound = (data.totalProfit || 0) > 0;
+
+    if (isWinRound) {
+      setMessage(
+        `WIN • Result ${data.resultNumber} (${data.resultColor}, ${data.size}). Net return ₹${data.totalProfit}.`
+      );
+      setMessageType("win");
+    } else {
+      setMessage(
+        `Better luck next time • Result ${data.resultNumber} (${data.resultColor}, ${data.size}).`
+      );
+      setMessageType("loss");
+    }
+
+    setResultModalData({
+      status: isWinRound ? "win" : "loss",
+      amount: data.totalProfit || 0,
+      resultNumber: data.resultNumber,
+      resultColor: data.resultColor,
+      size: data.size,
+      period: currentPeriod,
+    });
+    setShowResultModal(true);
+    setTimeout(() => setShowResultModal(false), 3000);
+  } catch (e) {
+    console.error("Settle error", e);
+    setMessage("Network error while settling bets.");
+    setMessageType("info");
+  } finally {
+    setSelectedBetKind(null);
+    setSelectedBetValue(null);
+    setSelectedAmount(null);
+    resetPeriodForGameType(gameType);
+    setIsSettling(false);
   }
+}
+
 
   // TIMER
   useEffect(() => {
@@ -3665,9 +3677,11 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
   // 🔹 NEW: server pe bet place karne ka generic function
   const placeBetOnServer = async (amount, betKind, betValue) => {
     if (placingDisabled) {
+      // ⏳ Trade lock wali condition – last 10 seconds me
       if (timeLeft <= 10) {
-        setMessage("Bet window closed. Wait for next round.");
-        setMessageType("info");
+        setShowLockModal(true);
+        // auto close after ~1.8 sec
+        setTimeout(() => setShowLockModal(false), 1800);
       }
       return;
     }
@@ -4044,6 +4058,42 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
             </div>
           </div>
         )}
+
+
+                {/* RESULT MODAL */}
+        {showResultModal && resultModalData && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-20">
+            <div className="bg-slate-900 border border-slate-700 rounded-3xl px-4 py-4 w-72 text-center shadow-xl">
+              <p
+                className={`text-sm font-semibold ${
+                  resultModalData.status === "win"
+                    ? "text-emerald-300"
+                    : "text-rose-300"
+                }`}
+              >
+                {resultModalData.status === "win"
+                  ? "Congratulations"
+                  : "Better luck next time"}
+              </p>
+              <p className="text-[11px] text-slate-300 mt-1">
+                Period {resultModalData.period}
+              </p>
+              <p className="text-[11px] text-slate-400 mt-1">
+                Result {resultModalData.resultNumber} (
+                {resultModalData.resultColor}, {resultModalData.size})
+              </p>
+              {resultModalData.status === "win" && (
+                <p className="text-lg text-emerald-300 mt-2 font-bold">
+                  ₹ {resultModalData.amount}
+                </p>
+              )}
+              <p className="text-[10px] text-slate-500 mt-2">
+                Auto close in a few seconds
+              </p>
+            </div>
+          </div>
+        )}
+
 
         {/* 🔹 NEW: Tiranga-style Bet Amount Modal */}
         <BetAmountModal
