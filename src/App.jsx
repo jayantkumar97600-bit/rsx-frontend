@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 export const API_BASE = "https://stormy-roz-rsxbackend-9574b2c9.koyeb.app";
 
 
-const MERCHANT_UPI = "8439736001-2@ybl"; // yahan apni UPI ID daal
+const MERCHANT_UPI = "843973600@ybl"; // yahan apni UPI ID daal
 const MERCHANT_NAME = "RSX WINGOD";     // naam jo UPI me dikhe
 import BetAmountModal from "./components/BetAmountModal"; // path adjust karo agar alag ho
 
