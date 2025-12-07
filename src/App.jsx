@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 
-const API_BASE = `http://${window.location.hostname}:5000`;
+export const API_BASE = "https://stormy-roz-rsxbackend-9574b2c9.koyeb.app";
+
 
 const MERCHANT_UPI = "8439736001-2@ybl"; // yahan apni UPI ID daal
 const MERCHANT_NAME = "RSX WINGOD";     // naam jo UPI me dikhe
