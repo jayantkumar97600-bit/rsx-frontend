@@ -3833,47 +3833,48 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
             {/* HIGHLIGHT BANNER */}
             <div className="relative px-4 pt-3 flex gap-3">
               <div className="flex-1 rounded-3xl bg-gradient-to-r from-sky-500/15 via-emerald-500/10 to-purple-500/10 border border-sky-500/25 px-3 py-2.5">
-                <div className="flex items-center justify-between gap-2">
-                  <div>
-                    <p className="text-[10px] text-sky-300/80">
-                      Current period · {gameType}
-                    </p>
-                    <p className="text-[11px] font-mono text-sky-50">
-                      {currentPeriod || "Syncing..."}
-                    </p>
-                    <p className="mt-1 text-[10px] text-slate-300">
-                      Place bets before{" "}
-                      <span className="text-amber-300 font-semibold">
-                        last 10 seconds
-                      </span>{" "}
-                      of the round.
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] text-sky-300/80">
-                      Time remaining
-                    </p>
-                    <p
-                      className={`font-semibold ${
-                        timeLeft <= 10
-                          ? "text-amber-300 text-lg"
-                          : "text-sky-50 text-[15px]"
-                      }`}
-                    >
-                      {formatTime(timeLeft)}
-                    </p>
-                    <div className="mt-1 w-28 h-1.5 rounded-full bg-slate-900/70 overflow-hidden ml-auto">
-                      <div
-                        className="h-full bg-gradient-to-r from-emerald-400 via-yellow-300 to-rose-400"
-                        style={{ width: `${progress}%` }}
-                      />
-                    </div>
-                    <p className="mt-1 text-[9px] text-slate-400">
-                      Auto settle at 0 sec
-                    </p>
-                  </div>
-                </div>
-              </div>
+  <div className="flex items-center justify-between gap-2">
+    <div>
+      <p className="text-[10px] text-sky-300/80 uppercase tracking-[0.18em]">
+        Current period · {gameType}
+      </p>
+
+      {/* BIG PROFESSIONAL PERIOD PILL */}
+      <div className="mt-1 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-950/70 border border-sky-400/70 shadow-[0_0_18px_rgba(56,189,248,0.55)]">
+        <span className="text-[10px] text-slate-400 uppercase tracking-[0.16em]">
+          PERIOD
+        </span>
+        <span className="text-[14px] leading-none font-mono font-semibold text-sky-50">
+          {currentPeriod || "Syncing..."}
+        </span>
+      </div>
+
+      <p className="mt-1 text-[10px] text-slate-300">
+        Place bets before{" "}
+        <span className="text-amber-300 font-semibold">
+          last 10 seconds
+        </span>{" "}
+        of the round.
+      </p>
+    </div>
+
+    {/* right side: Time remaining (jaisa already hai) */}
+    <div className="text-right">
+      <p className="text-[10px] text-sky-300/80">Time remaining</p>
+      <p
+        className={`font-semibold ${
+          timeLeft <= 10 ? "text-amber-300" : "text-emerald-300"
+        }`}
+      >
+        {formatTime(timeLeft)}
+      </p>
+      <p className="text-[10px] text-slate-300">
+        Auto settle at 0 sec
+      </p>
+    </div>
+  </div>
+</div>
+
 
               {/* MONEY IMAGE CARD */}
               <div className="hidden sm:block w-28 relative">
