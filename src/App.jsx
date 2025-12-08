@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from "react";
+import BetAmountModal from "./components/BetAmountModal"; // path adjust karo agar alag ho
 
 export const API_BASE = "https://stormy-roz-rsxbackend-9574b2c9.koyeb.app";
 
 
 const MERCHANT_UPI = "843973600@ybl"; // yahan apni UPI ID daal
 const MERCHANT_NAME = "RSX WINGOD";     // naam jo UPI me dikhe
-import BetAmountModal from "./components/BetAmountModal"; // path adjust karo agar alag ho
+
 
 
 
@@ -1215,7 +1216,7 @@ function AdminPanel({ token, onClose }) {
                     type="button"
                     onClick={() =>
                       setRiskConfig((prev) => ({
-                        prev,
+                        ...prev,
                         profitMode: !prev.profitMode,
                       }))
                     }
@@ -1237,7 +1238,7 @@ function AdminPanel({ token, onClose }) {
                     type="button"
                     onClick={() =>
                       setRiskConfig((prev) => ({
-                        prev,
+                        ...prev,
                         newUserBoost: !prev.newUserBoost,
                       }))
                     }
@@ -1257,7 +1258,7 @@ function AdminPanel({ token, onClose }) {
                     type="button"
                     onClick={() =>
                       setRiskConfig((prev) => ({
-                        prev,
+                        ...prev,
                         withdrawalRisk: !prev.withdrawalRisk,
                       }))
                     }
@@ -1279,7 +1280,7 @@ function AdminPanel({ token, onClose }) {
                     type="button"
                     onClick={() =>
                       setRiskConfig((prev) => ({
-                        prev,
+                        ...prev,
                         bigBetRisk: !prev.bigBetRisk,
                       }))
                     }
@@ -3529,6 +3530,75 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
 
   const placingDisabled =
     timeLeft <= 10 || isPlacingBet || isSettling || !currentPeriod;
+  
+    const placeBet = async () => {
+    if (placingDisabled) {
+      if (timeLeft <= 10) {
+        setMessage("Bet window closed. Wait for next round.");
+        setMessageType("info");
+      }
+      return;
+    }
+
+    if (!selectedBetKind || !selectedBetValue) {
+      setMessage("Choose bet type and value.");
+      setMessageType("info");
+      return;
+    }
+
+    if (!selectedAmount) {
+      setMessage("Choose an amount to stake.");
+      setMessageType("info");
+      return;
+    }
+
+    if (selectedAmount > balance) {
+      setMessage("Not enough balance for this bet.");
+      setMessageType("info");
+      return;
+    }
+
+    try {
+      setIsPlacingBet(true);
+      const res = await fetch(`${API_BASE}/api/game/bet`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          gameType,
+          betKind: selectedBetKind,
+          betValue: selectedBetValue,
+          amount: selectedAmount,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(data.message || "Failed to place bet.");
+        setMessageType("info");
+        return;
+      }
+
+      setBalance(data.bet.currentBalance);
+      onUserUpdate({ user, balance: data.bet.currentBalance });
+      syncBalance(data.bet.currentBalance);
+
+      setMessage(
+        `Bet placed on ${selectedBetKind.toUpperCase()} ${selectedBetValue} • ₹${selectedAmount} (Period ${data.bet.period}).`
+      );
+      setMessageType("info");
+    } catch (e) {
+      console.error("Bet place error", e);
+      setMessage("Network error while placing bet.");
+      setMessageType("info");
+    } finally {
+      setIsPlacingBet(false);
+    }
+  };
+
 
   // 🔹 NEW: server pe bet place karne ka generic function
   const placeBetOnServer = async (amount, betKind, betValue) => {
