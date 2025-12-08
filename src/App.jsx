@@ -3764,11 +3764,11 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
 
             {/* HEADER BAR */}
             <div className="relative px-4 pt-3 pb-2 border-b border-slate-800/80 flex items-center justify-between gap-3">
-  <div className="flex items-center gap-3">
+  <div className="flex items-center gap-2 flex-wrap">
     {onBack && (
       <button
         onClick={onBack}
-        className="hidden sm:inline-flex items-center gap-1 text-[11px] px-3 py-1.5 rounded-full bg-slate-900/90 border border-sky-500/60 text-sky-200 shadow-[0_0_18px_rgba(56,189,248,0.45)] hover:border-emerald-400 hover:text-emerald-200 hover:shadow-[0_0_22px_rgba(52,211,153,0.6)] transition"
+        className="flex-shrink-0 inline-flex items-center gap-1 text-[11px] px-3 py-1.5 rounded-full bg-slate-900/90 border border-sky-500/70 text-sky-100 shadow-[0_0_16px_rgba(56,189,248,0.6)] hover:border-emerald-400 hover:text-emerald-200 hover:shadow-[0_0_20px_rgba(52,211,153,0.7)] transition"
       >
         <span className="text-xs">◀</span>
         <span>Lobby</span>
@@ -3798,7 +3798,6 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
     </div>
   </div>
 
-  {/* right side balance block same as pehle */}
   <div className="text-right">
     <p className="text-[10px] text-slate-500">Available balance</p>
     <p className="text-emerald-400 text-xl font-semibold leading-tight">
