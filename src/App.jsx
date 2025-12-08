@@ -3902,160 +3902,174 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
             {/* MAIN CONTENT: LEFT bet grid + RIGHT history */}
             <div className="relative px-4 mt-3 pb-3 flex flex-col lg:flex-row gap-3">
               {/* BETTING PANEL */}
-              <div className="flex-1 rounded-3xl bg-slate-900/90 border border-slate-800 px-3 py-3 space-y-3">
-                {/* COLOR ROW */}
-                <div className="flex items-center justify-between">
-                  <p className="text-[11px] text-slate-200 font-semibold">
-                    Color selection
-                  </p>
-                  <p className="text-[10px] text-slate-500">
-                    All colors return{" "}
-                    <span className="text-emerald-300 font-semibold">
-                      x2.0
-                    </span>
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  {COLOR_OPTIONS.map((c) => (
-                    <button
-                      key={c.id}
-                      disabled={placingDisabled}
-                      onClick={() => {
-                        setSelectedBetKind("color");
-                        setSelectedBetValue(c.id);
-                      }}
-                      className={`flex-1 py-2 rounded-2xl border text-[11px] font-medium shadow-sm ${
-                        selectedBetKind === "color" &&
-                        selectedBetValue === c.id
-                          ? "border-emerald-400 text-emerald-300 bg-emerald-500/10"
-                          : "border-slate-700 text-slate-100 bg-slate-800"
-                      }`}
-                    >
-                      {c.label}
-                    </button>
-                  ))}
-                </div>
+              <div className="relative px-4 mt-3 pb-3 flex flex-col lg:flex-row gap-3">
+  {/* BETTING PANEL */}
+  <div className="flex-1 rounded-3xl bg-slate-900/90 border border-slate-800 px-3 py-3 space-y-3 relative overflow-hidden">
+    {/* 🔒 LAST 10 SEC OVERLAY */}
+    {timeLeft <= 10 && currentPeriod && (
+      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/85 backdrop-blur-sm">
+        <div className="relative">
+          <div className="absolute -inset-6 rounded-full bg-amber-400/25 blur-3xl animate-pulse" />
+          <div className="relative px-6 py-3 rounded-3xl bg-gradient-to-b from-amber-400 via-yellow-300 to-emerald-400 text-slate-900 shadow-[0_0_40px_rgba(250,204,21,0.65)] border border-amber-300/80">
+            <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-slate-800/80 text-center">
+              TRADE LOCK
+            </p>
+            <p className="mt-1 text-[28px] leading-none font-extrabold text-center tabular-nums">
+              {timeLeft}s
+            </p>
+            <p className="mt-1 text-[11px] text-slate-800/95 text-center">
+              Last 10 seconds · betting closed
+            </p>
+          </div>
+        </div>
+        <p className="mt-3 text-[10px] text-slate-300/90 text-center px-6">
+          New trades will open automatically in the next round.
+        </p>
+      </div>
+    )}
 
-                {/* NUMBER GRID */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-[11px] text-slate-200 font-semibold">
-                      Number (0–9)
-                    </p>
-                    <p className="text-[10px] text-slate-500">
-                      Exact hit{" "}
-                      <span className="text-amber-300 font-semibold">
-                        x10.0
-                      </span>
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-5 gap-1.5">
-                    {Array.from({ length: 10 }).map((_, i) => (
-                      <button
-                        key={i}
-                        disabled={placingDisabled}
-                        onClick={() => {
-                          setSelectedBetKind("number");
-                          setSelectedBetValue(String(i));
-                        }}
-                        className={`h-8 rounded-full text-[11px] font-semibold border flex items-center justify-center ${
-                          selectedBetKind === "number" &&
-                          selectedBetValue === String(i)
-                            ? "bg-amber-400 text-slate-950 border-amber-300 shadow"
-                            : "bg-slate-800 border-slate-700 text-slate-100"
-                        }`}
-                      >
-                        {i}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+    {/* COLOR ROW */}
+    <div className="flex items-center justify-between">
+      <p className="text-[11px] text-slate-200 font-semibold">
+        Color selection
+      </p>
+      <p className="text-[10px] text-slate-500">
+        All colors return{" "}
+        <span className="text-emerald-300 font-semibold">x2.0</span>
+      </p>
+    </div>
+    <div className="flex gap-2">
+      {COLOR_OPTIONS.map((c) => (
+        <button
+          key={c.id}
+          disabled={placingDisabled}
+          onClick={() => {
+            setSelectedBetKind("color");
+            setSelectedBetValue(c.id);
+          }}
+          className={`flex-1 py-2 rounded-2xl border text-[11px] font-medium shadow-sm ${
+            selectedBetKind === "color" && selectedBetValue === c.id
+              ? "border-emerald-400 text-emerald-300 bg-emerald-500/10"
+              : "border-slate-700 text-slate-100 bg-slate-800"
+          }`}
+        >
+          {c.label}
+        </button>
+      ))}
+    </div>
 
-                {/* SIZE (BIG/SMALL) */}
-                <div>
-                  <p className="text-[11px] text-slate-200 font-semibold mb-1">
-                    Size (Big / Small)
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <button
-                      disabled={placingDisabled}
-                      onClick={() => {
-                        setSelectedBetKind("size");
-                        setSelectedBetValue("BIG");
-                      }}
-                      className={`flex-1 mr-1 py-2 rounded-2xl border text-[11px] font-semibold ${
-                        selectedBetKind === "size" &&
-                        selectedBetValue === "BIG"
-                          ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow"
-                          : "bg-slate-800 border-slate-700 text-slate-100"
-                      }`}
-                    >
-                      BIG (5–9) · x2.0
-                    </button>
-                    <button
-                      disabled={placingDisabled}
-                      onClick={() => {
-                        setSelectedBetKind("size");
-                        setSelectedBetValue("SMALL");
-                      }}
-                      className={`flex-1 ml-1 py-2 rounded-2xl border text-[11px] font-semibold ${
-                        selectedBetKind === "size" &&
-                        selectedBetValue === "SMALL"
-                          ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow"
-                          : "bg-slate-800 border-slate-700 text-slate-100"
-                      }`}
-                    >
-                      SMALL (0–4) · x2.0
-                    </button>
-                  </div>
-                </div>
+    {/* NUMBER GRID */}
+    <div>
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-[11px] text-slate-200 font-semibold">
+          Number (0–9)
+        </p>
+        <p className="text-[10px] text-slate-500">
+          Exact hit{" "}
+          <span className="text-amber-300 font-semibold">x10.0</span>
+        </p>
+      </div>
+      <div className="grid grid-cols-5 gap-1.5">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <button
+            key={i}
+            disabled={placingDisabled}
+            onClick={() => {
+              setSelectedBetKind("number");
+              setSelectedBetValue(String(i));
+            }}
+            className={`h-8 rounded-full text-[11px] font-semibold border flex items-center justify-center ${
+              selectedBetKind === "number" &&
+              selectedBetValue === String(i)
+                ? "bg-amber-400 text-slate-950 border-amber-300 shadow"
+                : "bg-slate-800 border-slate-700 text-slate-100"
+            }`}
+          >
+            {i}
+          </button>
+        ))}
+      </div>
+    </div>
 
-                {/* AMOUNT + CTA */}
-                <div className="mt-2 pt-2 border-t border-slate-800">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-[11px] text-slate-200 font-semibold">
-                      Stake amount
-                    </p>
-                    <p className="text-[10px] text-slate-500">
-                      Balance:{" "}
-                      <span className="text-emerald-300">
-                        ₹ {balance.toLocaleString("en-IN")}
-                      </span>
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    {BET_AMOUNTS.map((amt) => (
-                      <button
-                        key={amt}
-                        disabled={placingDisabled}
-                        onClick={() => setSelectedAmount(amt)}
-                        className={`flex-1 py-1.5 rounded-full border text-[11px] ${
-                          selectedAmount === amt
-                            ? "border-emerald-400 text-emerald-300 bg-emerald-500/10"
-                            : "border-slate-700 text-slate-100 bg-slate-800"
-                        }`}
-                      >
-                        ₹ {amt}
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    onClick={placeBet}
-                    disabled={placingDisabled}
-                    className="w-full mt-3 py-2 rounded-2xl bg-gradient-to-r from-emerald-400 via-yellow-300 to-rose-400 text-slate-900 text-sm font-semibold shadow disabled:opacity-60"
-                  >
-                    {timeLeft <= 10
-                      ? "Trade window locked"
-                      : isPlacingBet
-                      ? "Placing bet..."
-                      : "Place trade"}
-                  </button>
-                  <p className="mt-1 text-[9px] text-slate-500">
-                    Trading is risky. Play responsibly. This is a demo-style
-                    game UI.
-                  </p>
-                </div>
-              </div>
+    {/* SIZE (BIG/SMALL) */}
+    <div>
+      <p className="text-[11px] text-slate-200 font-semibold mb-1">
+        Size (Big / Small)
+      </p>
+      <div className="flex items-center justify-between">
+        <button
+          disabled={placingDisabled}
+          onClick={() => {
+            setSelectedBetKind("size");
+            setSelectedBetValue("BIG");
+          }}
+          className={`flex-1 mr-1 py-2 rounded-2xl border text-[11px] font-semibold ${
+            selectedBetKind === "size" && selectedBetValue === "BIG"
+              ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow"
+              : "bg-slate-800 border-slate-700 text-slate-100"
+          }`}
+        >
+          BIG (5–9) · x2.0
+        </button>
+        <button
+          disabled={placingDisabled}
+          onClick={() => {
+            setSelectedBetKind("size");
+            setSelectedBetValue("SMALL");
+          }}
+          className={`flex-1 ml-1 py-2 rounded-2xl border text-[11px] font-semibold ${
+            selectedBetKind === "size" && selectedBetValue === "SMALL"
+              ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow"
+              : "bg-slate-800 border-slate-700 text-slate-100"
+          }`}
+        >
+          SMALL (0–4) · x2.0
+        </button>
+      </div>
+    </div>
+
+    {/* AMOUNT + CTA */}
+    <div className="mt-2 pt-2 border-t border-slate-800">
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-[11px] text-slate-200 font-semibold">
+          Stake amount
+        </p>
+        <p className="text-[10px] text-slate-500">
+          Balance:{" "}
+          <span className="text-emerald-300">
+            ₹ {balance.toLocaleString("en-IN")}
+          </span>
+        </p>
+      </div>
+      <div className="flex gap-2">
+        {BET_AMOUNTS.map((amt) => (
+          <button
+            key={amt}
+            disabled={placingDisabled}
+            onClick={() => setSelectedAmount(amt)}
+            className={`flex-1 py-1.5 rounded-full border text-[11px] ${
+              selectedAmount === amt
+                ? "border-emerald-400 text-emerald-300 bg-emerald-500/10"
+                : "border-slate-700 text-slate-100 bg-slate-800"
+            }`}
+          >
+            ₹ {amt}
+          </button>
+        ))}
+      </div>
+      <button
+        onClick={placeBet}
+        disabled={placingDisabled}
+        className="w-full mt-3 py-2 rounded-2xl bg-gradient-to-r from-emerald-400 via-yellow-300 to-rose-400 text-slate-900 text-sm font-semibold shadow disabled:opacity-60"
+      >
+        {timeLeft <= 10
+          ? "Bet window closed"
+          : isPlacingBet
+          ? "Placing bet..."
+          : "Place bet"}
+      </button>
+    </div>
+  </div>
 
               {/* RIGHT: HISTORY PANEL */}
               <div className="w-full lg:w-64 rounded-3xl bg-slate-900/90 border border-slate-800 px-3 py-3 flex flex-col">
