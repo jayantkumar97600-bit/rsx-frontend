@@ -64,21 +64,15 @@ function AuthScreen({ onAuthSuccess }) {
   const [error, setError] = useState("");
   const [referralCode, setReferralCode] = useState("");
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     if (!loginId || !password) {
-      setError(
-        mode === "login"
-          ? "Mobile number and password required"
-          : "Mobile number and password required"
-      );
+      setError("Mobile number and password required");
       return;
     }
 
-    // register ke time simple mobile length check
     if (mode === "register" && loginId.length < 10) {
       setError("Please enter a valid 10-digit mobile number.");
       return;
@@ -89,13 +83,11 @@ function AuthScreen({ onAuthSuccess }) {
       const body =
         mode === "login"
           ? {
-              // login: mobile ya username dono accept
               mobile: loginId,
               username: loginId,
               password,
             }
           : {
-              // register: is field ko mobile treat karo
               username: loginId,
               mobile: loginId,
               password,
@@ -127,97 +119,154 @@ function AuthScreen({ onAuthSuccess }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white px-3">
-      <div className="w-full max-w-sm bg-slate-900 p-5 rounded-2xl border border-slate-800">
-        <h1 className="text-2xl font-bold text-center">GOD WIN</h1>
-        <p className="text-xs text-slate-400 text-center mt-1">
-          RSX WINGOD · Color & Number Engine
-        </p>
-
-        <div className="flex bg-slate-800 rounded-full p-1 mt-4 text-xs">
-          <button
-            onClick={() => setMode("login")}
-            className={`flex-1 py-1 rounded-full ${
-              mode === "login" ? "bg-slate-900" : "text-slate-400"
-            }`}
-          >
-            Login
-          </button>
-          <button
-            onClick={() => setMode("register")}
-            className={`flex-1 py-1 rounded-full ${
-              mode === "register" ? "bg-slate-900" : "text-slate-400"
-            }`}
-          >
-            Register
-          </button>
+    <div className="app-root-bg">
+      <div className="app-card-glass">
+        {/* TOP BRAND STRIP */}
+        <div className="px-5 pt-4 pb-3 flex items-center justify-between border-b border-slate-800/60 bg-slate-950/70">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-slate-900/80 border border-sky-500/60 flex items-center justify-center overflow-hidden shadow-[0_0_25px_rgba(56,189,248,0.4)]">
+              <img
+                src="/images/rsx-logo.jpg"
+                alt="RSX"
+                className="w-8 h-8 object-contain"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "/images/rsx-logo.png";
+                }}
+              />
+            </div>
+            <div>
+              <p className="rsx-section-title">RSX WINGOD</p>
+              <h1 className="text-[20px] font-semibold tracking-wide">
+                Online Trading & Color Engine
+              </h1>
+            </div>
+          </div>
+          <div className="text-right text-[10px] text-slate-400">
+            <p>Secured by Razorpay</p>
+            <p className="text-emerald-300 font-semibold">Instant Wallet</p>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-3 text-sm">
-          <input
-            placeholder={
-              mode === "login"
-                ? "Mobile number or username"
-                : "Mobile number (one account per number)"
-            }
-            className="w-full bg-slate-800 px-3 py-2 rounded-lg border border-slate-700 outline-none"
-            value={loginId}
-            onChange={(e) => setLoginId(e.target.value)}
-            autoComplete="off"
-            inputMode="tel"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full bg-slate-800 px-3 py-2 rounded-lg border border-slate-700 outline-none"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+        {/* BODY */}
+        <div className="px-5 pb-5 pt-4 space-y-4">
+          {/* Mode toggle */}
+          <div className="flex bg-slate-900 rounded-full p-1 text-[11px] border border-slate-700/80">
+            <button
+              type="button"
+              onClick={() => setMode("login")}
+              className={`flex-1 py-1.5 rounded-full transition ${
+                mode === "login"
+                  ? "bg-gradient-to-r from-sky-500 to-emerald-400 text-slate-950 font-semibold shadow-[0_0_18px_rgba(56,189,248,0.6)]"
+                  : "text-slate-400"
+              }`}
+            >
+              Login
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("register")}
+              className={`flex-1 py-1.5 rounded-full transition ${
+                mode === "register"
+                  ? "bg-gradient-to-r from-amber-400 to-rose-500 text-slate-950 font-semibold shadow-[0_0_18px_rgba(248,250,252,0.5)]"
+                  : "text-slate-400"
+              }`}
+            >
+              Create account
+            </button>
+          </div>
 
-          {mode === "register" && (
-  <div className="mb-3">
-    <label className="block text-xs text-slate-300 mb-1">
-      Referral code (optional)
-    </label>
-    <input
-      type="text"
-      value={referralCode}
-      onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
-      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs outline-none"
-      placeholder="Enter referral code (if any)"
-    />
-  </div>
-)}
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-3 text-[13px]">
+            <div className="space-y-1">
+              <p className="text-[11px] text-slate-300">
+                Mobile number / Username
+              </p>
+              <input
+                placeholder={
+                  mode === "login"
+                    ? "Enter registered mobile or username"
+                    : "Enter 10-digit mobile (one account per number)"
+                }
+                className="w-full bg-slate-950/80 px-3 py-2.5 rounded-xl border border-slate-700 outline-none text-[13px] placeholder:text-slate-500 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/60"
+                value={loginId}
+                onChange={(e) => setLoginId(e.target.value)}
+                autoComplete="off"
+                inputMode="tel"
+              />
+            </div>
 
+            <div className="space-y-1">
+              <p className="text-[11px] text-slate-300">Password</p>
+              <input
+                type="password"
+                placeholder="Set a strong password"
+                className="w-full bg-slate-950/80 px-3 py-2.5 rounded-xl border border-slate-700 outline-none text-[13px] placeholder:text-slate-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/60"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
 
-          {error && (
-            <p className="text-red-400 text-xs bg-red-500/10 px-3 py-2 rounded">
-              {error}
-            </p>
-          )}
+            {mode === "register" && (
+              <div className="space-y-1">
+                <p className="text-[11px] text-slate-300">
+                  Referral code{" "}
+                  <span className="text-slate-500">(optional)</span>
+                </p>
+                <input
+                  placeholder="Enter code if someone invited you"
+                  className="w-full bg-slate-950/80 px-3 py-2.5 rounded-xl border border-slate-700 outline-none text-[13px] placeholder:text-slate-500 focus:border-amber-400 focus:ring-1 focus:ring-amber-400/50"
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value.trim())}
+                />
+              </div>
+            )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 bg-gradient-to-r from-emerald-400 via-yellow-300 to-rose-400 text-slate-900 rounded-xl font-semibold disabled:opacity-60"
-          >
-            {loading
-              ? "Please wait"
-              : mode === "login"
-              ? "Login"
-              : "Register & Login"}
-          </button>
-        </form>
+            {error && (
+              <p className="text-[11px] text-rose-300 bg-rose-500/10 px-3 py-2 rounded-xl border border-rose-500/60">
+                {error}
+              </p>
+            )}
 
-        <p className="text-[10px] text-slate-500 text-center mt-3">
-          Welcome to GOD WIN platform.:{" "}
-          <span className="font-mono">PLAY AND WIN</span> (type in the
-          mobile field).
-        </p>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2.5 mt-1 rounded-2xl font-semibold text-[13px] bg-gradient-to-r from-emerald-400 via-sky-400 to-amber-300 text-slate-950 shadow-[0_10px_35px_rgba(34,197,94,0.6)] disabled:opacity-60 disabled:shadow-none"
+            >
+              {loading
+                ? "Authorising..."
+                : mode === "login"
+                ? "Login securely"
+                : "Register & login"}
+            </button>
+          </form>
+
+          {/* Trust row */}
+          <div className="grid grid-cols-3 gap-2 text-[10px] text-slate-300">
+            <div className="rsx-chip border-emerald-400/60 text-emerald-300 bg-emerald-500/10">
+              <span>🛡️</span>
+              <span>Secure wallet</span>
+            </div>
+            <div className="rsx-chip border-sky-400/60 text-sky-300 bg-sky-500/10">
+              <span>⚡</span>
+              <span>Fast rounds</span>
+            </div>
+            <div className="rsx-chip border-amber-400/60 text-amber-300 bg-amber-500/10">
+              <span>🎁</span>
+              <span>Referral bonus</span>
+            </div>
+          </div>
+
+          <p className="text-[10px] text-slate-500 text-center">
+            RSX WINGOD is a <span className="text-slate-200">virtual game</span>{" "}
+            platform. Play responsibly. No guaranteed returns.
+          </p>
+        </div>
       </div>
     </div>
   );
 }
+
 
 
 /* ======================================================================
@@ -1455,59 +1504,11 @@ function GameLobby({
 }) {
   const balance = user.balance ?? 2500;
 
-  // ⭐ Aviator demo ke states
-  const [showAviator, setShowAviator] = useState(false);
-  const [aviMultiplier, setAviMultiplier] = useState(1.0);
-  const [aviRunning, setAviRunning] = useState(false);
-  const [aviCrashed, setAviCrashed] = useState(false);
-  const [aviBet, setAviBet] = useState("100");
-  const [aviInfo, setAviInfo] = useState("");
-
-  // simple crash animation
-  useEffect(() => {
-    if (!aviRunning) return;
-
-    const crashAt = 1.2 + Math.random() * 3.8; // 1.2x–5x
-
-    const id = setInterval(() => {
-      setAviMultiplier((prev) => {
-        const next = +(prev + 0.03).toFixed(2);
-        if (next >= crashAt) {
-          clearInterval(id);
-          setAviCrashed(true);
-          setAviRunning(false);
-          return +crashAt.toFixed(2);
-        }
-        return next;
-      });
-    }, 80);
-
-    return () => clearInterval(id);
-  }, [aviRunning]);
-
-  const startAviRound = () => {
-    setAviInfo("");
-    setAviMultiplier(1.0);
-    setAviCrashed(false);
-    setAviRunning(true);
-  };
-
-  const cashoutAvi = () => {
-    if (!aviRunning || aviCrashed) return;
-    setAviRunning(false);
-    setAviInfo(
-      `Demo cashout at ${aviMultiplier.toFixed(
-        2
-      )}x on bet ₹${aviBet || 0}. (UI only, no real wager.)`
-    );
-  };
-
   const categories = [
-    { id: "lottery", label: "Lottery" },
+    { id: "live", label: "Live" },
     { id: "original", label: "Original" },
-    { id: "slots", label: "Slots" },
-    { id: "fishing", label: "Fishing" },
-    { id: "more", label: "More" },
+    { id: "crash", label: "Crash" },
+    { id: "promo", label: "Offers" },
   ];
 
   const games = [
@@ -1516,332 +1517,187 @@ function GameLobby({
       title: "RSX WINGOD",
       subtitle: "Color & number prediction",
       tag: "HOT",
-      status: "Live",
-      gradient: "from-sky-400 to-indigo-500",
+      status: "Live now",
+      gradient: "from-sky-400 to-emerald-400",
       onClick: () => onOpenGame("godwin"),
     },
     {
       id: "aviator",
-      title: "Aviator",
-      subtitle: "Crash game demo",
+      title: "Aviator Demo",
+      subtitle: "Crash multiplier (UI only)",
       tag: "NEW",
-      status: "Live",
-      gradient: "from-rose-500 to-red-600",
-      onClick: () => setShowAviator(true),
-
+      status: "Demo",
+      gradient: "from-rose-500 to-orange-500",
+      onClick: () =>
+        onOpenPromotions
+          ? onOpenPromotions()
+          : alert("Aviator demo linked from Promotions."),
     },
     {
-      id: "boom",
-      title: "Boom",
-      subtitle: "Wheel spin (coming soon)",
-      tag: "SOON",
-      status: "Coming",
-      gradient: "from-emerald-400 to-lime-500",
-      onClick: () => alert("Boom UI coming soon."),
-    },
-    {
-      id: "k3",
-      title: "K3 Dice",
-      subtitle: "Dice concept",
-      tag: "SOON",
-      status: "Coming",
-      gradient: "from-purple-400 to-fuchsia-500",
-      onClick: () => alert("K3 UI coming soon."),
+      id: "promos",
+      title: "Promotions",
+      subtitle: "Referral, daily bonus, lucky spin",
+      tag: "BONUS",
+      status: "Active",
+      gradient: "from-amber-400 to-rose-500",
+      onClick: () => onOpenPromotions && onOpenPromotions(),
     },
   ];
 
   return (
-    <>
-      {/* MAIN LOBBY */}
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-3">
-        <div className="w-full max-w-md bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden flex flex-col">
-          {/* TOP BAR */}
-          <div className="px-4 pt-4 pb-3 flex items-center justify-between">
+    <div className="app-root-bg">
+      <div className="app-card-glass flex flex-col max-h-[680px]">
+        {/* TOP BAR */}
+        <div className="px-5 pt-4 pb-3 flex items-center justify-between border-b border-slate-800/70">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-2xl bg-slate-900/80 border border-sky-500/70 flex items-center justify-center overflow-hidden">
+              <img
+                src="/images/rsx-logo.jpg"
+                alt="RSX"
+                className="w-7 h-7 object-contain"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "/images/rsx-logo.png";
+                }}
+              />
+            </div>
             <div>
-              <p className="text-[11px] text-sky-300 font-semibold">GOD WIN</p>
-              <p className="text-xs text-slate-400">
-                Game platform · Virtual mode
+              <p className="rsx-section-title">GOD WIN · RSX</p>
+              <p className="text-xs text-slate-300">
+                Live engine · Multi-period rounds · Wallet sync
               </p>
-            </div>
-            <div className="text-right">
-              <p className="text-[11px] text-slate-400">Balance</p>
-              <p className="text-emerald-400 font-bold text-sm">
-                ₹ {balance.toLocaleString("en-IN")}
-              </p>
-              <button
-                onClick={onLogout}
-                className="mt-1 text-[10px] text-rose-400 underline"
-              >
-                Logout
-              </button>
             </div>
           </div>
 
-          {/* HERO BANNER */}
-          <div className="mx-4 mb-3 rounded-2xl bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-500 p-3 flex items-center justify-between shadow-lg">
-            <div className="max-w-[60%]">
-              <p className="text-[10px] uppercase tracking-wide text-sky-100">
-                LIVE ROUND ENGINE
-              </p>
-              <p className="text-xs mt-1 text-sky-50">
-                Color, number & crash demo with secure wallet system.
-              </p>
-            </div>
-            <div className="text-right text-[11px] text-sky-50">
-              <p>Welcome,</p>
-              <p className="font-semibold">{user.username}</p>
-            </div>
-          </div>
-
-          {/* CATEGORY ICONS */}
-          <div className="px-4 flex gap-3 overflow-x-auto pb-2">
-            {categories.map((c) => (
-              <div
-                key={c.id}
-                className="flex flex-col items-center shrink-0 text-[11px]"
-              >
-                <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
-                  <span className="text-[11px]">{c.label[0]}</span>
-                </div>
-                <p className="mt-1 text-slate-300">{c.label}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* SECTION: Lottery */}
-          <div className="px-4 mt-2">
-            <div className="flex justify-between items-center mb-1">
-              <p className="text-xs font-semibold text-slate-100">Lottery</p>
-              <p className="text-[10px] text-sky-400">More &gt;</p>
-            </div>
-            <p className="text-[10px] text-slate-400 mb-2">
-              Fair, time-based prediction-style games with clear rounds.
+          <div className="text-right text-[11px]">
+            <p className="text-slate-400">Available balance</p>
+            <p className="money-glow relative text-emerald-300 text-lg font-semibold leading-tight">
+              ₹ {balance.toLocaleString("en-IN")}
             </p>
+            <p className="text-slate-500">
+              {user.username}{" "}
+              {user.role === "admin" && (
+                <span className="text-amber-300 font-semibold">· Admin</span>
+              )}
+            </p>
+            <button
+              onClick={onLogout}
+              className="mt-1 text-[10px] px-2 py-1 rounded-full border border-rose-400/70 text-rose-300 bg-rose-500/10"
+            >
+              Logout
+            </button>
           </div>
+        </div>
 
-          {/* GAME CARDS GRID */}
-          <div className="px-4 pb-3 grid grid-cols-2 gap-3">
-            {games.map((g) => (
-              <button
-                key={g.id}
-                onClick={g.onClick}
-                className="rounded-2xl bg-slate-800 overflow-hidden border border-slate-700 text-left shadow-sm hover:shadow-md hover:border-sky-400 transition"
-              >
-                <div
-                  className={`h-20 bg-gradient-to-br ${g.gradient} flex items-center justify-center`}
-                >
-                  <p className="text-xs font-semibold">{g.title}</p>
-                </div>
-                <div className="px-3 py-2">
-                  <p className="text-[11px] text-slate-100">{g.subtitle}</p>
-                  <div className="mt-1 flex items-center justify-between">
-                    <span
-                      className={`text-[10px] px-2 py-[2px] rounded-full ${
-                        g.status === "Live"
-                          ? "bg-emerald-500/15 text-emerald-300 border border-emerald-400/70"
-                          : "bg-slate-700/70 text-slate-200 border border-slate-600"
-                      }`}
-                    >
+        {/* HERO BANNER */}
+        <div className="px-5 pt-3 pb-3">
+          <div className="relative overflow-hidden rounded-2xl border border-sky-500/50 bg-gradient-to-r from-sky-500/25 via-emerald-500/25 to-slate-900 shadow-[0_18px_45px_rgba(15,23,42,0.9)]">
+            <div className="absolute inset-0 opacity-40 bg-[url('/images/chart-bg.png')] bg-cover bg-center" />
+            <div className="relative flex justify-between items-center px-4 py-3">
+              <div className="max-w-[60%]">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-sky-100">
+                  LIVE MARKET STYLE
+                </p>
+                <p className="text-xs mt-1 text-slate-50">
+                  Predict colors & numbers in real-time rounds with instant
+                  wallet updates.
+                </p>
+                <p className="text-[10px] mt-2 text-emerald-200">
+                  30s · 1m · 3m · 5m periods · Multi-bet support
+                </p>
+              </div>
+              <div className="text-right text-[11px] text-sky-50">
+                <p className="font-semibold">RSX Engine</p>
+                <p className="text-[10px] text-emerald-200">
+                  UPI / Razorpay deposits
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CATEGORY CHIPS */}
+        <div className="px-5 pb-2 flex gap-2 overflow-x-auto custom-scroll">
+          {categories.map((c) => (
+            <button
+              key={c.id}
+              className="px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-700 text-[11px] text-slate-300 hover:border-sky-500/90 hover:text-sky-300 transition shrink-0"
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
+
+        {/* GAMES LIST */}
+        <div className="px-5 pb-3 flex-1 overflow-y-auto custom-scroll space-y-3">
+          {games.map((g) => (
+            <button
+              key={g.id}
+              onClick={g.onClick}
+              className="w-full text-left rounded-2xl bg-slate-900/80 border border-slate-700 overflow-hidden hover:border-sky-400/80 hover:shadow-[0_16px_40px_rgba(56,189,248,0.45)] transition"
+            >
+              <div
+                className={`h-16 bg-gradient-to-r ${g.gradient} opacity-70`}
+              />
+              <div className="px-4 py-3 flex items-center justify-between -mt-8 relative">
+                <div>
+                  <p className="text-xs text-slate-200 font-semibold">
+                    {g.title}
+                  </p>
+                  <p className="text-[11px] text-slate-400">{g.subtitle}</p>
+                  <div className="mt-1 flex items-center gap-2 text-[10px]">
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-400/60 text-emerald-300">
                       {g.status}
                     </span>
-                    <span className="text-[9px] px-2 py-[2px] rounded-full bg-sky-500/15 text-sky-300 border border-sky-400/70">
+                    <span className="px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-400/60 text-amber-300">
                       {g.tag}
                     </span>
                   </div>
                 </div>
-              </button>
-            ))}
-          </div>
+                <div className="text-right text-[10px] text-slate-400">
+                  <p>Tap to open</p>
+                  <p className="text-sky-300 font-semibold">ENTER ▶</p>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
 
-          {/* BOTTOM NAV */}
-          <div className="h-12 border-t border-slate-800 flex text-[11px] bg-slate-900/95">
-            <button
-              type="button"
-              className="flex-1 flex flex-col items-center justify-center text-sky-300 font-semibold"
-              onClick={onOpenPromotions}
-            >
-              <span>Promotion</span>
-            </button>
-            <button className="flex-1 flex flex-col items-center justify-center text-slate-300">
-              <span>Games</span>
-            </button>
-            <button
-              type="button"
-              className="flex-1 flex flex-col items-center justify-center text-slate-300 hover:text-sky-300"
-              onClick={onOpenWallet}
-            >
-              <span>Wallet</span>
-            </button>
-            <button
-              type="button"
-              className="flex-1 flex flex-col items-center justify-center text-slate-300 hover:text-sky-300"
-              onClick={onOpenAccount}
-            >
-              <span>Account</span>
-            </button>
-          </div>
+        {/* BOTTOM ACTION BAR */}
+        <div className="px-5 py-3 border-t border-slate-800/80 bg-slate-950/80 flex items-center justify-between text-[11px]">
+          <button
+            onClick={onOpenWallet}
+            className="flex flex-col items-start gap-0.5"
+          >
+            <span className="text-slate-300">Wallet</span>
+            <span className="text-[10px] text-emerald-300">
+              Manage deposit & withdraw
+            </span>
+          </button>
+          <button
+            onClick={onOpenPromotions}
+            className="flex flex-col items-center gap-0.5"
+          >
+            <span className="text-slate-300">Promotions</span>
+            <span className="text-[10px] text-amber-300">
+              Bonus, referral, spin
+            </span>
+          </button>
+          <button
+            onClick={onOpenAccount}
+            className="flex flex-col items-end gap-0.5"
+          >
+            <span className="text-slate-300">Account</span>
+            <span className="text-[10px] text-slate-400">
+              Profile & history
+            </span>
+          </button>
         </div>
       </div>
-
-      {/* AVIATOR POPUP OVERLAY */}
-      {showAviator && (
-        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center px-3">
-          <div className="w-full max-w-md bg-slate-900 rounded-3xl border border-slate-700 overflow-hidden flex flex-col">
-            {/* header */}
-            <div className="px-4 pt-3 pb-2 flex items-center justify-between bg-slate-900/90">
-              <div>
-                <p className="text-[11px] text-rose-400 font-semibold">
-                  Aviator · Demo
-                </p>
-                <p className="text-[10px] text-slate-400">
-                  Crash multiplier – interface preview only
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  setShowAviator(false);
-                  setAviRunning(false);
-                }}
-                className="text-[11px] px-2 py-1 rounded-full bg-slate-800 text-slate-200 border border-slate-600"
-              >
-                ✕ Close
-              </button>
-            </div>
-
-            {/* multiplier area */}
-            <div className="px-4 pt-3 pb-2 flex-1 bg-slate-950 flex flex-col gap-3">
-              <div className="rounded-2xl bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 border border-slate-700 shadow-inner overflow-hidden">
-                <div className="px-3 pt-2 pb-1 flex justify-between items-center">
-                  <p className="text-[10px] text-slate-300">
-                    Live multiplier (demo)
-                  </p>
-                  <p className="text-[10px] text-slate-400">
-                    Balance:{" "}
-                    <span className="text-emerald-300 font-semibold">
-                      ₹ {Number(balance).toLocaleString("en-IN")}
-                    </span>
-                  </p>
-                </div>
-                <div className="h-32 flex items-center justify-center relative">
-                  <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_bottom,_#fb923c_0,_transparent_60%)]" />
-                  <p
-                    className={`text-4xl font-extrabold tracking-wide ${
-                      aviCrashed ? "text-rose-400" : "text-amber-300"
-                    }`}
-                  >
-                    {aviMultiplier.toFixed(2)}x
-                  </p>
-                </div>
-                <div className="px-3 pb-2 flex justify-between text-[10px] text-slate-400">
-                  <p>
-                    Mode: <span className="text-sky-300">Fun / UI test</span>
-                  </p>
-                  {aviCrashed ? (
-                    <p className="text-rose-400 font-semibold">Crashed</p>
-                  ) : aviRunning ? (
-                    <p className="text-emerald-300 font-semibold">Flying…</p>
-                  ) : (
-                    <p className="text-slate-400">Tap start to begin</p>
-                  )}
-                </div>
-              </div>
-
-              {/* bet panel */}
-              <div className="rounded-2xl bg-slate-900 border border-slate-700 p-3 flex flex-col gap-3">
-                <div className="flex justify-between items-center">
-                  <p className="text-[11px] text-slate-200 font-semibold">
-                    Bet panel
-                  </p>
-                  <p className="text-[10px] text-slate-400">
-                    Demo calculation – no real wager
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <div className="flex-1">
-                    <p className="text-[11px] text-slate-300 mb-1">
-                      Bet amount
-                    </p>
-                    <input
-                      value={aviBet}
-                      onChange={(e) => setAviBet(e.target.value)}
-                      className="w-full bg-slate-950 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
-                      placeholder="100"
-                      type="number"
-                      min="1"
-                    />
-                  </div>
-                  <div className="text-right text-[11px]">
-                    <p className="text-slate-400 mb-1">Potential (demo)</p>
-                    <p className="text-emerald-300 font-semibold">
-                      ₹{" "}
-                      {(
-                        (Number(aviBet || 0) || 0) * aviMultiplier
-                      ).toFixed(2)}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 mt-1">
-                  <button
-                    type="button"
-                    onClick={startAviRound}
-                    disabled={aviRunning}
-                    className="py-2 rounded-xl bg-amber-400 text-slate-900 font-semibold text-xs disabled:opacity-60"
-                  >
-                    {aviRunning ? "Round running…" : "Start round"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={cashoutAvi}
-                    disabled={!aviRunning || aviCrashed}
-                    className="py-2 rounded-xl bg-emerald-500 text-slate-900 font-semibold text-xs disabled:opacity-40"
-                  >
-                    Cash out (demo)
-                  </button>
-                </div>
-              </div>
-
-              {/* static mini-history */}
-              <div className="rounded-2xl bg-slate-900 border border-slate-800 p-3">
-                <p className="text-[11px] text-slate-300 mb-2">
-                  Recent demo multipliers
-                </p>
-                <div className="flex gap-1 overflow-x-auto text-[11px]">
-                  {[1.16, 1.02, 1.74, 2.35, 3.12, 4.8, 1.47].map((m, i) => (
-                    <span
-                      key={i}
-                      className={`px-2 py-1 rounded-full border ${
-                        m < 1.2
-                          ? "bg-rose-500/10 border-rose-400/60 text-rose-300"
-                          : m < 2
-                          ? "bg-amber-500/10 border-amber-400/60 text-amber-300"
-                          : "bg-emerald-500/10 border-emerald-400/60 text-emerald-300"
-                      }`}
-                    >
-                      {m.toFixed(2)}x
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {aviInfo && (
-                <p className="text-[11px] text-slate-200 bg-slate-800 px-3 py-2 rounded-2xl border border-slate-700">
-                  {aviInfo}
-                </p>
-              )}
-
-              <p className="text-[10px] text-slate-500 text-center">
-                This Aviator view is a visual demo. All amounts shown are
-                virtual and used only for interface testing.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    </div>
   );
 }
+
 
 
 
