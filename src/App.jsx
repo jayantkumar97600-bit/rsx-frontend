@@ -3734,61 +3734,77 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
             {/* top glow stripe */}
             <div className="absolute inset-x-0 -top-16 h-32 bg-[radial-gradient(circle,_rgba(56,189,248,0.5),_transparent_60%)] opacity-40" />
 
+            {/* extra premium background glow */}
+            <div className="absolute inset-0 opacity-30 mix-blend-screen pointer-events-none bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.35),_transparent_55%),_radial-gradient(circle_at_bottom,_rgba(251,191,36,0.28),_transparent_55%)]" />
             <audio ref={beepAudioRef} src="/beep.mp3" />
 
             {/* HEADER BAR */}
             <div className="relative px-4 pt-3 pb-2 border-b border-slate-800/80 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-2xl bg-slate-900/80 border border-sky-500/60 flex items-center justify-center overflow-hidden">
-                  <img
-                    src="/images/rsx-logo.png"
-                    alt="RSX"
-                    className="w-7 h-7 object-contain"
-                    onError={(e) => (e.target.style.display = "none")}
-                  />
-                </div>
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-sky-400">
-                    RSX WINGOD
-                  </p>
-                  <h1 className="text-[18px] font-bold tracking-wide">
-                    Live Color · Number
-                  </h1>
-                  <p className="text-[10px] text-slate-400">
-                    Real-time rounds · Multi-period engine · Auto wallet sync
-                  </p>
-                </div>
-              </div>
+  <div className="flex items-center gap-3">
+    {onBack && (
+      <button
+        onClick={onBack}
+        className="hidden sm:inline-flex items-center gap-1 text-[11px] px-3 py-1.5 rounded-full bg-slate-900/90 border border-sky-500/60 text-sky-200 shadow-[0_0_18px_rgba(56,189,248,0.45)] hover:border-emerald-400 hover:text-emerald-200 hover:shadow-[0_0_22px_rgba(52,211,153,0.6)] transition"
+      >
+        <span className="text-xs">◀</span>
+        <span>Lobby</span>
+      </button>
+    )}
 
-              <div className="text-right">
-                <p className="text-[10px] text-slate-500">Available balance</p>
-                <p className="text-emerald-400 text-xl font-semibold leading-tight">
-                  ₹ {balance.toLocaleString("en-IN")}
-                </p>
-                <p className="text-[10px] text-slate-500">
-                  {user.username}{" "}
-                  {user.role === "admin" && (
-                    <span className="text-amber-400">· Admin</span>
-                  )}
-                </p>
-                <div className="flex gap-2 justify-end mt-1">
-                  {user.role === "admin" && (
-                    <button
-                      onClick={() => setShowAdmin(true)}
-                      className="text-[10px] px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-400 text-emerald-300"
-                    >
-                      Control Center
-                    </button>
-                  )}
-                  <button
-                    onClick={onLogout}
-                    className="text-[10px] px-2 py-1 rounded-full border border-rose-400/70 text-rose-300 bg-rose-500/5"
-                  >
-                    Logout
-                  </button>
-                </div>
-              </div>
-            </div>
+    <div className="flex items-center gap-3">
+      <div className="w-9 h-9 rounded-2xl bg-slate-900/80 border border-sky-500/60 flex items-center justify-center overflow-hidden">
+        <img
+          src="/images/rsx-logo.png"
+          alt="RSX"
+          className="w-7 h-7 object-contain"
+          onError={(e) => (e.target.style.display = "none")}
+        />
+      </div>
+      <div>
+        <p className="text-[11px] uppercase tracking-[0.18em] text-sky-400">
+          RSX WINGOD
+        </p>
+        <h1 className="text-[18px] font-bold tracking-wide">
+          Live Color · Number
+        </h1>
+        <p className="text-[10px] text-slate-400">
+          Real-time rounds · Multi-period engine · Auto wallet sync
+        </p>
+      </div>
+    </div>
+  </div>
+
+  {/* right side balance block same as pehle */}
+  <div className="text-right">
+    <p className="text-[10px] text-slate-500">Available balance</p>
+    <p className="text-emerald-400 text-xl font-semibold leading-tight">
+      ₹ {balance.toLocaleString("en-IN")}
+    </p>
+    <p className="text-[10px] text-slate-500">
+      {user.username}{" "}
+      {user.role === "admin" && (
+        <span className="text-amber-400">· Admin</span>
+      )}
+    </p>
+    <div className="flex gap-2 justify-end mt-1">
+      {user.role === "admin" && (
+        <button
+          onClick={() => setShowAdmin(true)}
+          className="text-[10px] px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-400 text-emerald-300"
+        >
+          Control Center
+        </button>
+      )}
+      <button
+        onClick={onLogout}
+        className="text-[10px] px-2 py-1 rounded-full border border-rose-400/70 text-rose-300 bg-rose-500/5"
+      >
+        Logout
+      </button>
+    </div>
+  </div>
+</div>
+
 
             {/* HIGHLIGHT BANNER */}
             <div className="relative px-4 pt-3 flex gap-3">
