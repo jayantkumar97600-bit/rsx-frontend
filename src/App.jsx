@@ -3901,9 +3901,8 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
 
             {/* MAIN CONTENT: LEFT bet grid + RIGHT history */}
             <div className="relative px-4 mt-3 pb-3 flex flex-col lg:flex-row gap-3">
-              {/* BETTING PANEL */}
-              <div className="relative px-4 mt-3 pb-3 flex flex-col lg:flex-row gap-3">
-  {/* BETTING PANEL */}
+              
+            {/* BETTING PANEL */}
   <div className="flex-1 rounded-3xl bg-slate-900/90 border border-slate-800 px-3 py-3 space-y-3 relative overflow-hidden">
     {/* 🔒 LAST 10 SEC OVERLAY */}
     {timeLeft <= 10 && currentPeriod && (
