@@ -3788,340 +3788,464 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
       ? "bg-rose-500/10 border-rose-400 text-rose-300"
       : "bg-slate-800/90 border-slate-700 text-slate-100";
 
-  return (
-    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-3">
+    return (
+    <div className="min-h-screen bg-[#020617] text-white flex items-stretch justify-center">
+      {/* GLOBAL BG GLOW */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(34,197,94,0.18),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(249,115,22,0.18),_transparent_60%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-950 to-slate-950" />
+      </div>
+
       {showAdmin && (
         <AdminPanel token={token} onClose={() => setShowAdmin(false)} />
       )}
 
-      <div className="w-full max-w-md rounded-[32px] border border-slate-800 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 p-4 relative overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.6)]">
-        <audio ref={beepAudioRef} src="/beep.mp3" />
+      {/* MAIN SHELL */}
+      <div className="w-full max-w-5xl px-3 py-4 md:py-6 flex flex-col md:flex-row gap-4">
+        {/* LEFT: GAME CARD */}
+        <div className="flex-1 flex items-stretch">
+          <div className="w-full rounded-[28px] border border-slate-800/80 bg-gradient-to-b from-slate-900/90 via-slate-950 to-slate-950 relative overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.9)]">
+            {/* top glow stripe */}
+            <div className="absolute inset-x-0 -top-16 h-32 bg-[radial-gradient(circle,_rgba(56,189,248,0.5),_transparent_60%)] opacity-40" />
 
-        {/* TOP BAR */}
-        {/* ... (yaha upar ka sab wahi rakha hai, unchanged) ... */}
+            <audio ref={beepAudioRef} src="/beep.mp3" />
 
-        {/* TOP BAR */}
-        <div className="flex items-start justify-between">
-          {/* ... tumhara original top bar code ... */}
-          {/* (maine yaha kuch nahi बदला, upar se neeche tak same) */}
-          <div className="flex items-center gap-2">
-            {onBack && (
-              <button
-                onClick={onBack}
-                className="text-[10px] px-2 py-1 rounded-full bg-slate-800 text-slate-200 border border-slate-700"
-              >
-                ← Lobby
-              </button>
-            )}
-            <div>
-              <p className="text-[10px] text-sky-400 font-semibold">
-                GOD WIN · RSX
-              </p>
-              <h1 className="text-lg font-bold tracking-wide">
-                RSX WINGOD Live
-              </h1>
-              <p className="text-[10px] text-slate-400">
-                Multi-period number · color · big/small
-              </p>
-            </div>
-          </div>
+            {/* HEADER BAR */}
+            <div className="relative px-4 pt-3 pb-2 border-b border-slate-800/80 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-2xl bg-slate-900/80 border border-sky-500/60 flex items-center justify-center overflow-hidden">
+                  <img
+                    src="/images/rsx-logo.png"
+                    alt="RSX"
+                    className="w-7 h-7 object-contain"
+                    onError={(e) => (e.target.style.display = "none")}
+                  />
+                </div>
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-sky-400">
+                    RSX WINGOD
+                  </p>
+                  <h1 className="text-[18px] font-bold tracking-wide">
+                    Live Color · Number
+                  </h1>
+                  <p className="text-[10px] text-slate-400">
+                    Real-time rounds · Multi-period engine · Auto wallet sync
+                  </p>
+                </div>
+              </div>
 
-          <div className="text-right">
-            <p className="text-[10px] text-slate-400">Balance</p>
-            <p className="text-emerald-400 text-lg font-semibold">
-              ₹ {balance.toLocaleString("en-IN")}
-            </p>
-            <p className="text-[10px] text-slate-500">
-              {user.username} {user.role === "admin" && "· Admin"}
-            </p>
-            <div className="flex gap-2 justify-end mt-1">
-              {user.role === "admin" && (
-                <button
-                  onClick={() => setShowAdmin(true)}
-                  className="text-[10px] px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-400 text-emerald-300"
-                >
-                  Admin
-                </button>
-              )}
-              <button
-                onClick={onLogout}
-                className="text-[10px] text-rose-400 underline"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* GAME TYPE TABS */}
-        {/* ... yeh block bhi same rakha hai ... */}
-
-        <div className="mt-3 bg-slate-900/80 rounded-2xl p-1 flex gap-1">
-          {GAME_TYPES.map((g) => (
-            <button
-              key={g.id}
-              onClick={() => setGameType(g.id)}
-              className={`flex-1 py-1.5 rounded-xl text-[11px] ${
-                gameType === g.id
-                  ? "bg-sky-500 text-slate-950 font-semibold shadow"
-                  : "text-slate-300"
-              }`}
-            >
-              {g.label}
-            </button>
-          ))}
-        </div>
-
-        {/* PERIOD + TIMER CARD */}
-        {/* ... same as before ... */}
-        <div className="mt-3 rounded-2xl bg-gradient-to-r from-sky-500/20 via-sky-600/10 to-purple-600/10 border border-sky-500/30 px-3 py-2.5 flex items-center justify-between">
-          <div>
-            <p className="text-[10px] text-sky-300/80">Current period</p>
-            <p className="text-[11px] font-mono text-sky-100">
-              {currentPeriod || "–"}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-[10px] text-sky-300/80">Time remaining</p>
-            <p
-              className={`font-semibold ${
-                timeLeft <= 10 ? "text-amber-300 text-lg" : "text-sky-50"
-              }`}
-            >
-              {formatTime(timeLeft)}
-            </p>
-            <div className="mt-1 w-28 h-1.5 rounded-full bg-slate-900/60 overflow-hidden ml-auto">
-              <div
-                className="h-full bg-gradient-to-r from-emerald-400 via-yellow-300 to-rose-400"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* MESSAGE BAR */}
-        <div
-          className={`mt-3 text-[11px] px-3 py-2 rounded-2xl border ${messageBg}`}
-        >
-          {message}
-        </div>
-
-        {/* BET PANEL */}
-        <div className="mt-4 rounded-3xl bg-slate-900/90 border border-slate-800 px-3 py-3 space-y-3">
-          {/* COLOR ROW */}
-          <div className="flex items-center justify-between">
-            <p className="text-[11px] text-slate-300 font-medium">Color</p>
-            <p className="text-[10px] text-slate-500">
-              All colors return x2.0
-            </p>
-          </div>
-          <div className="flex gap-2">
-            {COLOR_OPTIONS.map((c) => (
-              <button
-                key={c.id}
-                disabled={placingDisabled}
-                onClick={() =>
-                  openBetModal("color", c.id, c.label)
-                }
-                className={`flex-1 py-2 rounded-2xl border text-[11px] font-medium shadow-sm ${
-                  selectedBetKind === "color" && selectedBetValue === c.id
-                    ? "border-emerald-400 text-emerald-300 bg-emerald-500/10"
-                    : "border-slate-700 text-slate-100 bg-slate-800"
-                }`}
-              >
-                {c.label}
-              </button>
-            ))}
-          </div>
-
-          {/* NUMBER ROW */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <p className="text-[11px] text-slate-300 font-medium">
-                Number (0–9)
-              </p>
-              <p className="text-[10px] text-slate-500">Exact hit x10.0</p>
-            </div>
-            <div className="grid grid-cols-5 gap-1.5">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <button
-                  key={i}
-                  disabled={placingDisabled}
-                  onClick={() =>
-                    openBetModal("number", String(i), `Number ${i}`)
-                  }
-                  className={`h-8 rounded-full text-[11px] font-semibold border flex items-center justify-center ${
-                    selectedBetKind === "number" &&
-                    selectedBetValue === String(i)
-                      ? "bg-amber-400 text-slate-950 border-amber-300 shadow"
-                      : "bg-slate-800 border-slate-700 text-slate-100"
-                  }`}
-                >
-                  {i}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* SIZE ROW */}
-          <div className="flex items-center justify-between mt-1">
-            <button
-              disabled={placingDisabled}
-              onClick={() =>
-                openBetModal("size", "BIG", "BIG (5–9)")
-              }
-              className={`flex-1 mr-1 py-2 rounded-2xl border text-[11px] font-semibold ${
-                selectedBetKind === "size" && selectedBetValue === "BIG"
-                  ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow"
-                  : "bg-slate-800 border-slate-700 text-slate-100"
-              }`}
-            >
-              BIG (5–9) · x2.0
-            </button>
-            <button
-              disabled={placingDisabled}
-              onClick={() =>
-                openBetModal("size", "SMALL", "SMALL (0–4)")
-              }
-              className={`flex-1 ml-1 py-2 rounded-2xl border text-[11px] font-semibold ${
-                selectedBetKind === "size" && selectedBetValue === "SMALL"
-                  ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow"
-                  : "bg-slate-800 border-slate-700 text-slate-100"
-              }`}
-            >
-              SMALL (0–4) · x2.0
-            </button>
-          </div>
-
-          {/* 🔹 NEW: bottom text – ab amount yaha nahi, modal me */}
-          <div className="mt-3 text-[10px] text-slate-400 text-center">
-            Tap any Color, Number or Size above to choose amount and place your bet.
-          </div>
-        </div>
-
-        {/* RESULTS HISTORY – yaha kuch nahi बदला */}
-        {/* ... tumhara original history block ... */}
-
-        <div className="mt-4 border-t border-slate-800 pt-3">
-          {/* (same as your code above) */}
-          {/* ... */}
-          {resultsHistory.length === 0 ? (
-            <p className="text-[11px] text-slate-500">
-              No result history yet for this game.
-            </p>
-          ) : (
-            <div className="max-h-40 overflow-auto space-y-1 pr-1">
-              {resultsHistory.map((r, idx) => {
-                const col = r.color || "G";
-                const colorClass =
-                  col === "G"
-                    ? "bg-emerald-500"
-                    : col === "R"
-                    ? "bg-rose-500"
-                    : "bg-indigo-500";
-                return (
-                  <div
-                    key={r.period + "-" + idx}
-                    className="flex items-center justify-between bg-slate-900/80 px-2 py-1.5 rounded-2xl text-[11px] border border-slate-800"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white ${colorClass}`}
-                      >
-                        {r.number}
-                      </div>
-                      <div>
-                        <p className="text-slate-100 font-mono">
-                          {r.period}
-                        </p>
-                        <p className="text-slate-400 text-[10px]">
-                          Color: {col} · Size: {r.size}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right text-[10px] text-slate-400">
-                      {r.size === "BIG" ? "High" : "Low"}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* RESULT MODAL – same as before */}
-        {showResultModal && resultModalData && (
-          <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-20">
-            {/* ... tumhara existing result modal code ... */}
-            <div className="bg-slate-900 border border-slate-700 rounded-3xl px-4 py-4 w-72 text-center shadow-xl">
-              {/* ... */}
-            </div>
-          </div>
-        )}
-
-
-                {/* RESULT MODAL */}
-        {showResultModal && resultModalData && (
-          <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-20">
-            <div className="bg-slate-900 border border-slate-700 rounded-3xl px-4 py-4 w-72 text-center shadow-xl">
-              <p
-                className={`text-sm font-semibold ${
-                  resultModalData.status === "win"
-                    ? "text-emerald-300"
-                    : "text-rose-300"
-                }`}
-              >
-                {resultModalData.status === "win"
-                  ? "Congratulations"
-                  : "Better luck next time"}
-              </p>
-              <p className="text-[11px] text-slate-300 mt-1">
-                Period {resultModalData.period}
-              </p>
-              <p className="text-[11px] text-slate-400 mt-1">
-                Result {resultModalData.resultNumber} (
-                {resultModalData.resultColor}, {resultModalData.size})
-              </p>
-              {resultModalData.status === "win" && (
-                <p className="text-lg text-emerald-300 mt-2 font-bold">
-                  ₹ {resultModalData.amount}
+              <div className="text-right">
+                <p className="text-[10px] text-slate-500">Available balance</p>
+                <p className="text-emerald-400 text-xl font-semibold leading-tight">
+                  ₹ {balance.toLocaleString("en-IN")}
                 </p>
-              )}
-              <p className="text-[10px] text-slate-500 mt-2">
-                Auto close in a few seconds
-              </p>
+                <p className="text-[10px] text-slate-500">
+                  {user.username}{" "}
+                  {user.role === "admin" && (
+                    <span className="text-amber-400">· Admin</span>
+                  )}
+                </p>
+                <div className="flex gap-2 justify-end mt-1">
+                  {user.role === "admin" && (
+                    <button
+                      onClick={() => setShowAdmin(true)}
+                      className="text-[10px] px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-400 text-emerald-300"
+                    >
+                      Control Center
+                    </button>
+                  )}
+                  <button
+                    onClick={onLogout}
+                    className="text-[10px] px-2 py-1 rounded-full border border-rose-400/70 text-rose-300 bg-rose-500/5"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* HIGHLIGHT BANNER */}
+            <div className="relative px-4 pt-3 flex gap-3">
+              <div className="flex-1 rounded-3xl bg-gradient-to-r from-sky-500/15 via-emerald-500/10 to-purple-500/10 border border-sky-500/25 px-3 py-2.5">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-[10px] text-sky-300/80">
+                      Current period · {gameType}
+                    </p>
+                    <p className="text-[11px] font-mono text-sky-50">
+                      {currentPeriod || "Syncing..."}
+                    </p>
+                    <p className="mt-1 text-[10px] text-slate-300">
+                      Place bets before{" "}
+                      <span className="text-amber-300 font-semibold">
+                        last 10 seconds
+                      </span>{" "}
+                      of the round.
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] text-sky-300/80">
+                      Time remaining
+                    </p>
+                    <p
+                      className={`font-semibold ${
+                        timeLeft <= 10
+                          ? "text-amber-300 text-lg"
+                          : "text-sky-50 text-[15px]"
+                      }`}
+                    >
+                      {formatTime(timeLeft)}
+                    </p>
+                    <div className="mt-1 w-28 h-1.5 rounded-full bg-slate-900/70 overflow-hidden ml-auto">
+                      <div
+                        className="h-full bg-gradient-to-r from-emerald-400 via-yellow-300 to-rose-400"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                    <p className="mt-1 text-[9px] text-slate-400">
+                      Auto settle at 0 sec
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* MONEY IMAGE CARD */}
+              <div className="hidden sm:block w-28 relative">
+                <div className="w-full h-full rounded-3xl bg-slate-900/90 border border-amber-400/40 flex items-center justify-center overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.9)]">
+                  <img
+                    src="/images/money-glow.png"
+                    alt="Trading capital"
+                    className="w-full h-full object-cover"
+                    onError={(e) => (e.target.style.display = "none")}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* GAME TYPE TABS + INFO STRIP */}
+            <div className="relative px-4 mt-3">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex-1 bg-slate-900/80 rounded-2xl p-1 flex gap-1 border border-slate-800">
+                  {GAME_TYPES.map((g) => (
+                    <button
+                      key={g.id}
+                      onClick={() => setGameType(g.id)}
+                      className={`flex-1 py-1.5 rounded-xl text-[11px] ${
+                        gameType === g.id
+                          ? "bg-sky-500 text-slate-950 font-semibold shadow"
+                          : "text-slate-300"
+                      }`}
+                    >
+                      {g.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="hidden sm:block text-[10px] text-right text-slate-400 w-32">
+                  Live demo engine ·{" "}
+                  <span className="text-emerald-300">No lag</span> ·{" "}
+                  <span className="text-amber-300">Auto result</span>
+                </div>
+              </div>
+            </div>
+
+            {/* MESSAGE BAR */}
+            <div className="relative px-4 mt-3">
+              <div
+                className={`text-[11px] px-3 py-2 rounded-2xl border ${messageBg} backdrop-blur-sm`}
+              >
+                {message}
+              </div>
+            </div>
+
+            {/* MAIN CONTENT: LEFT bet grid + RIGHT history */}
+            <div className="relative px-4 mt-3 pb-3 flex flex-col lg:flex-row gap-3">
+              {/* BETTING PANEL */}
+              <div className="flex-1 rounded-3xl bg-slate-900/90 border border-slate-800 px-3 py-3 space-y-3">
+                {/* COLOR ROW */}
+                <div className="flex items-center justify-between">
+                  <p className="text-[11px] text-slate-200 font-semibold">
+                    Color selection
+                  </p>
+                  <p className="text-[10px] text-slate-500">
+                    All colors return{" "}
+                    <span className="text-emerald-300 font-semibold">
+                      x2.0
+                    </span>
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  {COLOR_OPTIONS.map((c) => (
+                    <button
+                      key={c.id}
+                      disabled={placingDisabled}
+                      onClick={() => {
+                        setSelectedBetKind("color");
+                        setSelectedBetValue(c.id);
+                      }}
+                      className={`flex-1 py-2 rounded-2xl border text-[11px] font-medium shadow-sm ${
+                        selectedBetKind === "color" &&
+                        selectedBetValue === c.id
+                          ? "border-emerald-400 text-emerald-300 bg-emerald-500/10"
+                          : "border-slate-700 text-slate-100 bg-slate-800"
+                      }`}
+                    >
+                      {c.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* NUMBER GRID */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-[11px] text-slate-200 font-semibold">
+                      Number (0–9)
+                    </p>
+                    <p className="text-[10px] text-slate-500">
+                      Exact hit{" "}
+                      <span className="text-amber-300 font-semibold">
+                        x10.0
+                      </span>
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-5 gap-1.5">
+                    {Array.from({ length: 10 }).map((_, i) => (
+                      <button
+                        key={i}
+                        disabled={placingDisabled}
+                        onClick={() => {
+                          setSelectedBetKind("number");
+                          setSelectedBetValue(String(i));
+                        }}
+                        className={`h-8 rounded-full text-[11px] font-semibold border flex items-center justify-center ${
+                          selectedBetKind === "number" &&
+                          selectedBetValue === String(i)
+                            ? "bg-amber-400 text-slate-950 border-amber-300 shadow"
+                            : "bg-slate-800 border-slate-700 text-slate-100"
+                        }`}
+                      >
+                        {i}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* SIZE (BIG/SMALL) */}
+                <div>
+                  <p className="text-[11px] text-slate-200 font-semibold mb-1">
+                    Size (Big / Small)
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <button
+                      disabled={placingDisabled}
+                      onClick={() => {
+                        setSelectedBetKind("size");
+                        setSelectedBetValue("BIG");
+                      }}
+                      className={`flex-1 mr-1 py-2 rounded-2xl border text-[11px] font-semibold ${
+                        selectedBetKind === "size" &&
+                        selectedBetValue === "BIG"
+                          ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow"
+                          : "bg-slate-800 border-slate-700 text-slate-100"
+                      }`}
+                    >
+                      BIG (5–9) · x2.0
+                    </button>
+                    <button
+                      disabled={placingDisabled}
+                      onClick={() => {
+                        setSelectedBetKind("size");
+                        setSelectedBetValue("SMALL");
+                      }}
+                      className={`flex-1 ml-1 py-2 rounded-2xl border text-[11px] font-semibold ${
+                        selectedBetKind === "size" &&
+                        selectedBetValue === "SMALL"
+                          ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow"
+                          : "bg-slate-800 border-slate-700 text-slate-100"
+                      }`}
+                    >
+                      SMALL (0–4) · x2.0
+                    </button>
+                  </div>
+                </div>
+
+                {/* AMOUNT + CTA */}
+                <div className="mt-2 pt-2 border-t border-slate-800">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-[11px] text-slate-200 font-semibold">
+                      Stake amount
+                    </p>
+                    <p className="text-[10px] text-slate-500">
+                      Balance:{" "}
+                      <span className="text-emerald-300">
+                        ₹ {balance.toLocaleString("en-IN")}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    {BET_AMOUNTS.map((amt) => (
+                      <button
+                        key={amt}
+                        disabled={placingDisabled}
+                        onClick={() => setSelectedAmount(amt)}
+                        className={`flex-1 py-1.5 rounded-full border text-[11px] ${
+                          selectedAmount === amt
+                            ? "border-emerald-400 text-emerald-300 bg-emerald-500/10"
+                            : "border-slate-700 text-slate-100 bg-slate-800"
+                        }`}
+                      >
+                        ₹ {amt}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={placeBet}
+                    disabled={placingDisabled}
+                    className="w-full mt-3 py-2 rounded-2xl bg-gradient-to-r from-emerald-400 via-yellow-300 to-rose-400 text-slate-900 text-sm font-semibold shadow disabled:opacity-60"
+                  >
+                    {timeLeft <= 10
+                      ? "Trade window locked"
+                      : isPlacingBet
+                      ? "Placing bet..."
+                      : "Place trade"}
+                  </button>
+                  <p className="mt-1 text-[9px] text-slate-500">
+                    Trading is risky. Play responsibly. This is a demo-style
+                    game UI.
+                  </p>
+                </div>
+              </div>
+
+              {/* RIGHT: HISTORY PANEL */}
+              <div className="w-full lg:w-64 rounded-3xl bg-slate-900/90 border border-slate-800 px-3 py-3 flex flex-col">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs text-slate-200 font-semibold">
+                    Recent results · {gameType}
+                  </p>
+                  <p className="text-[10px] text-slate-500">
+                    Last {resultsHistory.length || 0}
+                  </p>
+                </div>
+
+                {resultsHistory.length === 0 ? (
+                  <p className="text-[11px] text-slate-500">
+                    No result history yet for this game.
+                  </p>
+                ) : (
+                  <div className="max-h-40 overflow-auto custom-scroll space-y-1 pr-1">
+                    {resultsHistory.map((r, idx) => {
+                      const col = r.color || "G";
+                      const colorClass =
+                        col === "G"
+                          ? "bg-emerald-500"
+                          : col === "R"
+                          ? "bg-rose-500"
+                          : "bg-indigo-500";
+                      return (
+                        <div
+                          key={r.period + "-" + idx}
+                          className="flex items-center justify-between bg-slate-900/80 px-2 py-1.5 rounded-2xl text-[11px] border border-slate-800"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div
+                              className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white ${colorClass}`}
+                            >
+                              {r.number}
+                            </div>
+                            <div>
+                              <p className="text-slate-100 font-mono">
+                                {r.period}
+                              </p>
+                              <p className="text-slate-400 text-[10px]">
+                                Color: {col} · Size: {r.size}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right text-[10px] text-slate-400">
+                            {r.size === "BIG" ? "High" : "Low"}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* RESULT MODAL (same as pehle) */}
+            {showResultModal && resultModalData && (
+              <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-20">
+                <div className="bg-slate-900 border border-slate-700 rounded-3xl px-4 py-4 w-72 text-center shadow-xl">
+                  <p
+                    className={`text-sm font-semibold ${
+                      resultModalData.status === "win"
+                        ? "text-emerald-300"
+                        : "text-rose-300"
+                    }`}
+                  >
+                    {resultModalData.status === "win"
+                      ? "Congratulations"
+                      : "Better luck next time"}
+                  </p>
+                  <p className="text-[11px] text-slate-300 mt-1">
+                    Period {resultModalData.period}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    Result {resultModalData.resultNumber} (
+                    {resultModalData.resultColor}, {resultModalData.size})
+                  </p>
+                  {resultModalData.status === "win" && (
+                    <p className="text-lg text-emerald-300 mt-2 font-bold">
+                      ₹ {resultModalData.amount}
+                    </p>
+                  )}
+                  <p className="text-[10px] text-slate-500 mt-2">
+                    Auto close in a few seconds
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* RIGHT: QUICK STATS SIDEBAR (future: wallet, deposits etc) */}
+        <div className="hidden md:flex w-64 flex-col gap-3">
+          <div className="rounded-3xl bg-slate-900/90 border border-slate-800 px-3 py-3">
+            <p className="text-[11px] text-slate-400 uppercase tracking-[0.2em]">
+              Session stats
+            </p>
+            <p className="mt-1 text-sm text-slate-100">
+              Demo trading environment active.
+            </p>
+            <div className="mt-2 text-[11px] space-y-1.5">
+              <div className="flex justify-between">
+                <span className="text-slate-400">Current game</span>
+                <span className="text-sky-300 font-medium">{gameType}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Rounds auto-settle</span>
+                <span className="text-emerald-300 font-medium">Yes</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Wallet sync</span>
+                <span className="text-amber-300 font-medium">Live</span>
+              </div>
             </div>
           </div>
-        )}
 
-
-        {/* 🔹 NEW: Tiranga-style Bet Amount Modal */}
-        <BetAmountModal
-          isOpen={betModalOpen}
-          onClose={() => setBetModalOpen(false)}
-          onConfirm={handleConfirmBet}
-          balance={balance}
-          betLabel={
-            activeBet
-              ? activeBet.label ||
-                (activeBet.betKind === "color"
-                  ? COLOR_OPTIONS.find(
-                      (c) => c.id === activeBet.betValue
-                    )?.label
-                  : activeBet.betKind === "number"
-                  ? `Number ${activeBet.betValue}`
-                  : activeBet.betValue)
-              : ""
-          }
-          gameLabel={`WinGo ${
-            GAME_TYPES.find((g) => g.id === gameType)?.label || gameType
-          }`}
-          minBet={MIN_BET}
-          maxBet={MAX_BET}
-        />
+          <div className="rounded-3xl bg-gradient-to-b from-emerald-500/15 via-sky-500/10 to-slate-950 border border-emerald-400/40 px-3 py-3">
+            <p className="text-[11px] text-emerald-300 uppercase tracking-[0.2em]">
+              Tip
+            </p>
+            <p className="mt-1 text-[11px] text-slate-100">
+              Start with small trades. Use bonus & small stakes to test your
+              strategy before going heavy.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
+
 }
 
 
