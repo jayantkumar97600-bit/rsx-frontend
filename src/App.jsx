@@ -4072,6 +4072,7 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
           </span>
         </p>
       </div>
+
       <div className="flex gap-2">
         {BET_AMOUNTS.map((amt) => (
           <button
@@ -4088,6 +4089,7 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
           </button>
         ))}
       </div>
+
       <button
         onClick={placeBet}
         disabled={placingDisabled}
@@ -4100,82 +4102,84 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
           : "Place bet"}
       </button>
     </div>
-  </div>
+  </div> {/* ← BETTING PANEL END */}
 
-              {/* RIGHT: HISTORY PANEL */}
-              <div className="w-full lg:w-64 rounded-3xl bg-slate-900/90 border border-slate-800 px-3 py-3 flex flex-col">
-  <div className="flex items-center justify-between mb-1">
-    <p className="text-xs text-slate-200 font-semibold">
-      Recent results · {gameType}
-    </p>
-    <p className="text-[10px] text-slate-500">
-      Last {resultsHistory.length || 0}
-    </p>
-  </div>
-
-  {resultsHistory.length === 0 ? (
-    <p className="text-[11px] text-slate-500">
-      No result history yet for this game.
-    </p>
-  ) : (
-    <div className="max-h-40 overflow-auto custom-scroll space-y-1.5 pr-1">
-      {resultsHistory.map((r, idx) => {
-        const col = r.color || "G";
-        const colorClass =
-          col === "G"
-            ? "bg-emerald-500"
-            : col === "R"
-            ? "bg-rose-500"
-            : "bg-indigo-500";
-
-        return (
-          <div
-            key={r.period + "-" + idx}
-            className="grid grid-cols-4 items-center bg-gradient-to-r from-slate-900/85 via-slate-950/85 to-slate-900/85 border border-slate-800 px-2 py-2 rounded-2xl text-[11px] shadow-sm hover:border-sky-400/40 hover:shadow-[0_0_18px_rgba(56,189,248,0.35)] transition"
-          >
-            {/* PERIOD */}
-            <span className="font-mono text-slate-300 text-[10px] overflow-hidden text-ellipsis whitespace-nowrap">
-              {r.period}
-            </span>
-
-            {/* NUMBER */}
-            <span
-              className={`font-mono text-[14px] font-bold text-center ${
-                [1, 3, 7, 9].includes(Number(r.number))
-                  ? "text-emerald-400"
-                  : [2, 4, 6, 8].includes(Number(r.number))
-                  ? "text-rose-400"
-                  : Number(r.number) === 5
-                  ? "text-amber-400"
-                  : Number(r.number) === 0
-                  ? "text-violet-400"
-                  : "text-slate-200"
-              }`}
-            >
-              {r.number}
-            </span>
-
-            {/* BIG / SMALL */}
-            <span
-              className={`text-center font-semibold ${
-                r.size === "BIG" ? "text-amber-400" : "text-sky-400"
-              }`}
-            >
-              {r.size}
-            </span>
-
-            {/* COLOR DOT */}
-            <span className="flex justify-center">
-              <span
-                className={`w-3 h-3 rounded-full ${colorClass} shadow-[0_0_8px_rgba(255,255,255,0.25)]`}
-              />
-            </span>
-          </div>
-        );
-      })}
+  {/* RIGHT: HISTORY PANEL */}
+  <div className="w-full lg:w-64 rounded-3xl bg-slate-900/90 border border-slate-800 px-3 py-3 flex flex-col">
+    <div className="flex items-center justify-between mb-1">
+      <p className="text-xs text-slate-200 font-semibold">
+        Recent results · {gameType}
+      </p>
+      <p className="text-[10px] text-slate-500">
+        Last {resultsHistory.length || 0}
+      </p>
     </div>
-  )}
-</div>
+
+    {resultsHistory.length === 0 ? (
+      <p className="text-[11px] text-slate-500">
+        No result history yet for this game.
+      </p>
+    ) : (
+      <div className="max-h-40 overflow-auto custom-scroll space-y-1.5 pr-1">
+        {resultsHistory.map((r, idx) => {
+          const col = r.color || "G";
+          const colorClass =
+            col === "G"
+              ? "bg-emerald-500"
+              : col === "R"
+              ? "bg-rose-500"
+              : "bg-indigo-500";
+
+          return (
+            <div
+              key={r.period + "-" + idx}
+              className="grid grid-cols-4 items-center bg-gradient-to-r from-slate-900/85 via-slate-950/85 to-slate-900/85 border border-slate-800 px-2 py-2 rounded-2xl text-[11px] shadow-sm hover:border-sky-400/40 hover:shadow-[0_0_18px_rgba(56,189,248,0.35)] transition"
+            >
+              {/* PERIOD */}
+              <span className="font-mono text-slate-300 text-[10px] overflow-hidden text-ellipsis whitespace-nowrap">
+                {r.period}
+              </span>
+
+              {/* NUMBER */}
+              <span
+                className={`font-mono text-[14px] font-bold text-center ${
+                  [1, 3, 7, 9].includes(Number(r.number))
+                    ? "text-emerald-400"
+                    : [2, 4, 6, 8].includes(Number(r.number))
+                    ? "text-rose-400"
+                    : Number(r.number) === 5
+                    ? "text-amber-400"
+                    : Number(r.number) === 0
+                    ? "text-violet-400"
+                    : "text-slate-200"
+                }`}
+              >
+                {r.number}
+              </span>
+
+              {/* BIG / SMALL */}
+              <span
+                className={`text-center font-semibold ${
+                  r.size === "BIG" ? "text-amber-400" : "text-sky-400"
+                }`}
+              >
+                {r.size}
+              </span>
+
+              {/* COLOR DOT */}
+              <span className="flex justify-center">
+                <span
+                  className={`w-3 h-3 rounded-full ${colorClass} shadow-[0_0_8px_rgba(255,255,255,0.25)]`}
+                />
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </div> {/* ← HISTORY PANEL END */}
+</div> {/* ← MAIN ROW (bet + history) END */}
+
 
             {/* RESULT MODAL (same as pehle) */}
             {showResultModal && resultModalData && (
