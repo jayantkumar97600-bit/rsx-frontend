@@ -3325,6 +3325,30 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
     }
   };
 
+
+
+    const getNumberBaseClass = (n) => {
+    if (n === 0) {
+      // 0 → red + violet
+      return "bg-gradient-to-r from-rose-500 to-indigo-500 text-white border-transparent";
+    }
+    if (n === 5) {
+      // 5 → green + violet
+      return "bg-gradient-to-r from-emerald-500 to-indigo-500 text-white border-transparent";
+    }
+    if ([1, 3, 7, 9].includes(n)) {
+      // green numbers
+      return "bg-emerald-500 text-slate-950 border-emerald-400";
+    }
+    if ([2, 4, 6, 8].includes(n)) {
+      // red numbers
+      return "bg-rose-500 text-slate-50 border-rose-400";
+    }
+    // fallback (normally kabhi nahi aayega)
+    return "bg-slate-800 text-slate-100 border-slate-700";
+  };
+
+
   const syncBalance = async (b) => {
     try {
       await fetch(`${API_BASE}/api/auth/balance`, {
@@ -3946,10 +3970,16 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
             setSelectedBetKind("color");
             setSelectedBetValue(c.id);
           }}
-          className={`flex-1 py-2 rounded-2xl border text-[11px] font-medium shadow-sm ${
-            selectedBetKind === "color" && selectedBetValue === c.id
-              ? "border-emerald-400 text-emerald-300 bg-emerald-500/10"
-              : "border-slate-700 text-slate-100 bg-slate-800"
+          className={`flex-1 py-2 rounded-2xl text-[11px] font-semibold shadow-sm border transition ${
+            c.id === "G"
+              ? "bg-emerald-500 text-slate-950 border-emerald-400"
+              : c.id === "R"
+              ? "bg-rose-500 text-slate-50 border-rose-400"
+              : "bg-indigo-500 text-slate-50 border-indigo-400"
+            } ${
+              selectedBetKind === "color" && selectedBetValue === c.id
+                ? "ring-2 ring-offset-2 ring-offset-slate-900 ring-amber-300"
+                : ""
           }`}
         >
           {c.label}
@@ -3977,11 +4007,12 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
               setSelectedBetKind("number");
               setSelectedBetValue(String(i));
             }}
-            className={`h-8 rounded-full text-[11px] font-semibold border flex items-center justify-center ${
-              selectedBetKind === "number" &&
-              selectedBetValue === String(i)
-                ? "bg-amber-400 text-slate-950 border-amber-300 shadow"
-                : "bg-slate-800 border-slate-700 text-slate-100"
+            className={`h-8 rounded-full text-[11px] font-semibold border flex items-center justify-center transition ${
+              getNumberBaseClass(i)
+            } ${
+              selectedBetKind === "number" && selectedBetValue === String(i)
+                ? "ring-2 ring-amber-300 ring-offset-2 ring-offset-slate-900 scale-[1.03]"
+                : ""
             }`}
           >
             {i}
@@ -4002,10 +4033,10 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
             setSelectedBetKind("size");
             setSelectedBetValue("BIG");
           }}
-          className={`flex-1 mr-1 py-2 rounded-2xl border text-[11px] font-semibold ${
+          className={`flex-1 mr-1 py-2 rounded-2xl border text-[11px] font-semibold transition ${
             selectedBetKind === "size" && selectedBetValue === "BIG"
-              ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow"
-              : "bg-slate-800 border-slate-700 text-slate-100"
+              ? "bg-amber-500 text-slate-950 border-amber-300 shadow-lg ring-2 ring-amber-300 ring-offset-2 ring-offset-slate-900"
+              : "bg-amber-400 text-slate-950 border-amber-300"
           }`}
         >
           BIG (5–9) · x2.0
@@ -4016,10 +4047,10 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
             setSelectedBetKind("size");
             setSelectedBetValue("SMALL");
           }}
-          className={`flex-1 ml-1 py-2 rounded-2xl border text-[11px] font-semibold ${
+          className={`flex-1 ml-1 py-2 rounded-2xl border text-[11px] font-semibold transition ${
             selectedBetKind === "size" && selectedBetValue === "SMALL"
-              ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow"
-              : "bg-slate-800 border-slate-700 text-slate-100"
+              ? "bg-sky-500 text-slate-950 border-sky-300 shadow-lg ring-2 ring-sky-300 ring-offset-2 ring-offset-slate-900"
+              : "bg-sky-400 text-slate-950 border-sky-300"
           }`}
         >
           SMALL (0–4) · x2.0
