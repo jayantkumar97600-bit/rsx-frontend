@@ -3276,6 +3276,10 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
   const [selectedBetValue, setSelectedBetValue] = useState(null); // "G","R","V","0"-"9","SMALL","BIG"
   const [selectedAmount, setSelectedAmount] = useState(null); // ab mainly reset ke liye
 
+
+  const [isStakeModalOpen, setIsStakeModalOpen] = useState(false);
+
+
   const [message, setMessage] = useState(
     "Choose color / number / big-small and stake amount."
   );
@@ -4059,49 +4063,52 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
     </div>
 
     {/* AMOUNT + CTA */}
-    <div className="mt-2 pt-2 border-t border-slate-800">
-      <div className="flex items-center justify-between mb-1">
+    <div className="mt-2 pt-2 border-t border-slate-800 space-y-2">
+      <div className="flex items-center justify-between">
         <p className="text-[11px] text-slate-200 font-semibold">
           Stake amount
         </p>
-        <p className="text-[10px] text-slate-500">
-          Balance:{" "}
-          <span className="text-emerald-300">
-            ₹ {balance.toLocaleString("en-IN")}
-          </span>
-        </p>
-      </div>
-
-      <div className="flex gap-2">
-        {BET_AMOUNTS.map((amt) => (
-          <button
-            key={amt}
-            disabled={placingDisabled}
-            onClick={() => setSelectedAmount(amt)}
-            className={`flex-1 py-1.5 rounded-full border text-[11px] ${
-              selectedAmount === amt
-                ? "border-emerald-400 text-emerald-300 bg-emerald-500/10"
-                : "border-slate-700 text-slate-100 bg-slate-800"
-            }`}
-          >
-            ₹ {amt}
-          </button>
-        ))}
-      </div>
-
-      <button
-        onClick={placeBet}
-        disabled={placingDisabled}
-        className="w-full mt-3 py-2 rounded-2xl bg-gradient-to-r from-emerald-400 via-yellow-300 to-rose-400 text-slate-900 text-sm font-semibold shadow disabled:opacity-60"
-      >
-        {timeLeft <= 10
-          ? "Bet window closed"
-          : isPlacingBet
-          ? "Placing bet..."
-          : "Place bet"}
-      </button>
+      <p className="text-[10px] text-slate-500">
+        Balance:{" "}
+        <span className="text-emerald-300">
+          ₹ {balance.toLocaleString("en-IN")}
+        </span>
+      </p>
     </div>
-  </div> {/* ← BETTING PANEL END */}
+
+  {/* yahi se modal open hoga */}
+  <button
+    type="button"
+    onClick={() => setIsStakeModalOpen(true)}
+    className="w-full rounded-2xl bg-slate-900/80 border border-slate-700 px-3 py-2 flex items-center justify-between text-left hover:border-sky-400/70 hover:shadow-[0_0_20px_rgba(56,189,248,0.35)] transition"
+  >
+    <div>
+      <p className="text-[10px] text-slate-400">Selected amount</p>
+      <p className="text-sm font-semibold text-slate-50">
+        {selectedAmount
+          ? `₹ ${selectedAmount.toLocaleString("en-IN")}`
+          : "Tap to choose stake"}
+      </p>
+      <p className="text-[10px] text-slate-500">
+        1 · 10 · 100 · 1000 chips · quantity / custom
+      </p>
+    </div>
+    <span className="text-xs text-sky-300 font-semibold">Change ▶</span>
+  </button>
+
+  <button
+    onClick={placeBet}
+    disabled={placingDisabled}
+    className="w-full mt-1 py-2 rounded-2xl bg-gradient-to-r from-emerald-400 via-yellow-300 to-rose-400 text-slate-900 text-sm font-semibold shadow disabled:opacity-60"
+  >
+    {timeLeft <= 10
+      ? "Bet window closed"
+      : isPlacingBet
+      ? "Placing bet..."
+      : "Place bet"}
+  </button>
+</div>
+</div> {/* ← BETTING PANEL END */}
 
   {/* RIGHT: HISTORY PANEL */}
   <div className="w-full lg:w-64 rounded-3xl bg-slate-900/90 border border-slate-800 px-3 py-3 flex flex-col">
@@ -4178,6 +4185,26 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
     )}
   </div> {/* ← HISTORY PANEL END */}
 </div> {/* ← MAIN ROW (bet + history) END */}
+
+
+<BetAmountModal
+  isOpen={isStakeModalOpen}
+  onClose={() => setIsStakeModalOpen(false)}
+  onConfirm={(amount) => {
+    setSelectedAmount(amount);
+    setIsStakeModalOpen(false);
+  }}
+  balance={balance}
+  betLabel={
+    selectedBetKind
+      ? `${selectedBetKind.toUpperCase()} ${selectedBetValue ?? ""}`
+      : "Select color / number / size first"
+  }
+  gameLabel={gameType}
+  minBet={1}
+  maxBet={1000000}
+/>
+
 
 
             {/* RESULT MODAL (same as pehle) */}
