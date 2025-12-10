@@ -3277,7 +3277,7 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
   const [selectedAmount, setSelectedAmount] = useState(null); // ab mainly reset ke liye
 
 
-  const [isStakeModalOpen, setIsStakeModalOpen] = useState(false);
+  
 
 
   const [message, setMessage] = useState(
@@ -4079,7 +4079,32 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
   {/* yahi se modal open hoga */}
   <button
     type="button"
-    onClick={() => setIsStakeModalOpen(true)}
+    onClick={() => {
+      if (!selectedBetKind || !selectedBetValue) {
+        setMessage("Choose color / number / big-small first.");
+        setMessageType("info");
+        return;
+      }
+
+      // label banayenge UI ke liye
+      let label = "";
+      if (selectedBetKind === "color") {
+        const c = COLOR_OPTIONS.find((x) => x.id === selectedBetValue);
+        label = c ? c.label : selectedBetValue;
+      } else if (selectedBetKind === "size") {
+        label =
+          selectedBetValue === "BIG" ? "BIG (5–9)" : "SMALL (0–4)";
+      } else if (selectedBetKind === "number") {
+        label = `Number ${selectedBetValue}`;
+      }
+
+      setActiveBet({
+        betKind: selectedBetKind,
+        betValue: selectedBetValue,
+        label,
+      });
+      setBetModalOpen(true);
+    }}
     className="w-full rounded-2xl bg-slate-900/80 border border-slate-700 px-3 py-2 flex items-center justify-between text-left hover:border-sky-400/70 hover:shadow-[0_0_20px_rgba(56,189,248,0.35)] transition"
   >
     <div>
@@ -4095,6 +4120,7 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
     </div>
     <span className="text-xs text-sky-300 font-semibold">Change ▶</span>
   </button>
+
 
   <button
     onClick={placeBet}
@@ -4188,22 +4214,36 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
 
 
 <BetAmountModal
-  isOpen={isStakeModalOpen}
-  onClose={() => setIsStakeModalOpen(false)}
-  onConfirm={(amount) => {
+  isOpen={betModalOpen}
+  onClose={() => setBetModalOpen(false)}
+  onConfirm={async (amount) => {
+    // yahi se backend pe bet place hoga
+    if (!activeBet) return;
+    await placeBetOnServer(amount, activeBet.betKind, activeBet.betValue);
     setSelectedAmount(amount);
-    setIsStakeModalOpen(false);
+    setBetModalOpen(false);
   }}
   balance={balance}
   betLabel={
-    selectedBetKind
+    activeBet
+      ? activeBet.label
+      : selectedBetKind
       ? `${selectedBetKind.toUpperCase()} ${selectedBetValue ?? ""}`
       : "Select color / number / size first"
   }
-  gameLabel={gameType}
-  minBet={1}
-  maxBet={1000000}
+  gameLabel={
+    gameType === "30s"
+      ? "WinGo · 30 sec"
+      : gameType === "60s"
+      ? "WinGo · 1 min"
+      : gameType === "180s"
+      ? "WinGo · 3 min"
+      : "WinGo · 5 min"
+  }
+  minBet={MIN_BET}
+  maxBet={MAX_BET}
 />
+
 
 
 
