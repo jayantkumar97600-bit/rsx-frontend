@@ -1529,10 +1529,7 @@ function GameLobby({
       tag: "NEW",
       status: "Demo",
       gradient: "from-rose-500 to-orange-500",
-      onClick: () =>
-        onOpenPromotions
-          ? onOpenPromotions()
-          : alert("Aviator demo linked from Promotions."),
+      onClick: () => onOpenGame && onOpenGame("aviator"),
     },
     {
       id: "promos",
@@ -4713,6 +4710,18 @@ export default function App() {
       />
     );
   }
+
+  if (screen === "aviator") {
+    return (
+      <AviatorScreen
+        user={user}
+        token={token}
+        onBackToLobby={() => setScreen("lobby")}
+        onLogout={handleLogout}
+      />
+    );
+  }
+      
 
     if (screen === "promotions") {
     return (
