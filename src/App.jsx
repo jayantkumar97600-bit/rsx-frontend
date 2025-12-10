@@ -3797,6 +3797,13 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
         <h1 className="text-[18px] font-bold tracking-wide">
           Live Color · Number
         </h1>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 rounded-2xl bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-500 text-slate-900 text-[11px] font-semibold shadow-[0_0_15px_rgba(99,102,241,0.5)] hover:shadow-[0_0_22px_rgba(99,102,241,0.8)] transition"
+        >
+          🔄 Refresh
+        
+        </button>
         <p className="text-[10px] text-slate-400">
           Real-time rounds · Multi-period engine · Auto wallet sync
         </p>
