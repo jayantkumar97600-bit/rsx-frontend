@@ -1,7 +1,4 @@
-import React, { useMemo, useState } from "react";
-
-const QUICK_AMOUNTS = [1, 10, 100, 1000, 5000];
-const MULTIPLIERS = [1, 5, 10, 20, 50, 100];
+import React, { useState } from "react";
 
 export default function BetAmountModal({
   isOpen,
@@ -13,62 +10,51 @@ export default function BetAmountModal({
   minBet = 1,
   maxBet = 1000000,
 }) {
-  const [unitAmount, setUnitAmount] = useState(10);
-  const [quantity, setQuantity] = useState(1);
-  const [customAmount, setCustomAmount] = useState("");
-  const [agree, setAgree] = useState(true);
+  // Simple hooks only
+  const [amount, setAmount] = useState("");
   const [error, setError] = useState("");
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
-  const totalAmount = useMemo(() => {
-    const custom = Number(customAmount);
-    if (!Number.isNaN(custom) && custom > 0) {
-      return Math.floor(custom);
-    }
-    return unitAmount * quantity;
-  }, [unitAmount, quantity, customAmount]);
+  const numericAmount = Number(amount || 0);
+
+  const handleQuick = (val) => {
+    setError("");
+    setAmount(String(val));
+  };
+
+  const handleChange = (e) => {
+    const clean = e.target.value.replace(/[^\d]/g, "");
+    setAmount(clean);
+    setError("");
+  };
 
   const handleConfirm = () => {
     setError("");
 
-    if (!agree) {
-      setError("Please accept the rules before placing a trade.");
-      return;
-    }
-
-    if (!totalAmount || totalAmount <= 0) {
+    if (!numericAmount || numericAmount <= 0) {
       setError("Enter a valid amount.");
       return;
     }
-
-    if (totalAmount < minBet) {
+    if (numericAmount < minBet) {
       setError(`Minimum stake is ₹${minBet}.`);
       return;
     }
-
-    if (totalAmount > maxBet) {
-      setError(`Maximum stake is ₹${maxBet.toLocaleString("en-IN")}.`);
+    if (numericAmount > maxBet) {
+      setError(
+        `Maximum stake is ₹${maxBet.toLocaleString("en-IN")}.`
+      );
       return;
     }
-
-    if (totalAmount > balance) {
+    if (numericAmount > balance) {
       setError("Insufficient balance for this stake.");
       return;
     }
 
-    onConfirm(totalAmount);
+    onConfirm(numericAmount);
   };
-
-  const handleCustomChange = (e) => {
-    const value = e.target.value.replace(/[^\d]/g, "");
-    setCustomAmount(value);
-  };
-
-  const activeChip = useMemo(() => {
-    if (customAmount) return null;
-    return unitAmount;
-  }, [unitAmount, customAmount]);
 
   return (
     <div className="fixed inset-0 z-40 flex items-end justify-center sm:items-center bg-black/60 backdrop-blur-sm">
@@ -103,75 +89,47 @@ export default function BetAmountModal({
             </p>
           </div>
 
-          {/* QUICK CHIPS */}
+          {/* QUICK BUTTONS */}
           <div className="space-y-1">
             <p className="text-[11px] text-slate-300 font-semibold">
-              Quick chips
+              Quick amounts
             </p>
             <div className="flex gap-2">
-              {QUICK_AMOUNTS.map((amt) => (
+              {[10, 50, 100, 500, 1000, 5000].map((val) => (
                 <button
-                  key={amt}
+                  key={val}
                   type="button"
-                  onClick={() => {
-                    setUnitAmount(amt);
-                    if (!customAmount) {
-                      setQuantity(1);
-                    }
-                  }}
+                  onClick={() => handleQuick(val)}
                   className={`flex-1 py-1.5 rounded-2xl text-[11px] font-semibold border ${
-                    activeChip === amt
+                    numericAmount === val
                       ? "bg-sky-500 text-slate-950 border-sky-300 shadow"
                       : "bg-slate-900 text-slate-200 border-slate-700"
                   }`}
                 >
-                  ₹ {amt.toLocaleString("en-IN")}
+                  ₹ {val.toLocaleString("en-IN")}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* MULTIPLIER / QUANTITY */}
+          {/* INPUT */}
           <div className="space-y-1">
             <p className="text-[11px] text-slate-300 font-semibold">
-              Quantity (×)
-            </p>
-            <div className="flex gap-2">
-              {MULTIPLIERS.map((mul) => (
-                <button
-                  key={mul}
-                  type="button"
-                  onClick={() => setQuantity(mul)}
-                  className={`flex-1 py-1.5 rounded-2xl text-[11px] font-semibold border ${
-                    !customAmount && quantity === mul
-                      ? "bg-emerald-500 text-slate-950 border-emerald-300 shadow"
-                      : "bg-slate-900 text-slate-200 border-slate-700"
-                  }`}
-                >
-                  ×{mul}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* CUSTOM AMOUNT */}
-          <div className="space-y-1">
-            <p className="text-[11px] text-slate-300 font-semibold">
-              Or enter custom stake
+              Enter custom amount
             </p>
             <div className="flex items-center gap-2">
               <span className="text-[11px] text-slate-400">₹</span>
               <input
                 type="text"
-                value={customAmount}
-                onChange={handleCustomChange}
+                value={amount}
+                onChange={handleChange}
                 className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-sm outline-none text-slate-100"
-                placeholder="Custom amount"
+                placeholder="Type any amount"
               />
-              {customAmount && (
+              {amount && (
                 <button
                   type="button"
-                  onClick={() => setCustomAmount("")}
+                  onClick={() => setAmount("")}
                   className="text-[10px] text-slate-400 px-2 py-1 rounded-full border border-slate-700"
                 >
                   Clear
@@ -179,39 +137,20 @@ export default function BetAmountModal({
               )}
             </div>
             <p className="text-[10px] text-slate-500">
-              If custom filled, quick chips & quantity will auto-adjust.
+              Min ₹{minBet} · Max ₹{maxBet.toLocaleString("en-IN")}
             </p>
           </div>
 
-          {/* ERROR + INFO */}
-          <div className="flex items-center justify-between text-[10px]">
-            <span className="text-slate-500">
-              Min ₹{minBet} · Max ₹{maxBet.toLocaleString("en-IN")}
-            </span>
-            {error ? (
-              <span className="text-rose-400 font-medium">{error}</span>
-            ) : (
-              <span className="text-emerald-400 font-semibold">
-                Total ₹{(totalAmount || 0).toLocaleString("en-IN")}
-              </span>
-            )}
-          </div>
-
-          {/* I AGREE */}
-          <label className="flex items-center gap-2 text-[10px] text-slate-300 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={agree}
-              onChange={(e) => setAgree(e.target.checked)}
-              className="w-3 h-3 rounded border border-sky-400 bg-slate-900"
-            />
-            <span>
-              I agree{" "}
-              <span className="text-rose-400 font-semibold">
-                《Pre-sale rules》
-              </span>
-            </span>
-          </label>
+          {/* ERROR / INFO */}
+          {error ? (
+            <p className="text-[11px] text-rose-300 bg-rose-500/10 border border-rose-500/60 rounded-xl px-3 py-2">
+              {error}
+            </p>
+          ) : (
+            <p className="text-[11px] text-emerald-300">
+              Total stake: ₹{numericAmount.toLocaleString("en-IN")}
+            </p>
+          )}
         </div>
 
         {/* FOOTER BUTTONS */}
@@ -225,13 +164,8 @@ export default function BetAmountModal({
           </button>
           <button
             type="button"
-            disabled={!!error || totalAmount <= 0}
             onClick={handleConfirm}
-            className={`flex-1 py-3 text-sm font-semibold ${
-              error || totalAmount <= 0
-                ? "bg-slate-700 text-slate-400 cursor-not-allowed"
-                : "bg-gradient-to-r from-emerald-400 via-yellow-300 to-rose-400 text-slate-950 shadow-lg"
-            }`}
+            className="flex-1 py-3 text-sm font-semibold bg-gradient-to-r from-emerald-400 via-yellow-300 to-rose-400 text-slate-950 shadow-lg"
           >
             Confirm trade
           </button>

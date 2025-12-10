@@ -3294,6 +3294,7 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
   const [showLockModal, setShowLockModal] = useState(false);
 
   const beepAudioRef = useRef(null);
+  const [isStakeModalOpen, setIsStakeModalOpen] = useState(false);
 
   // 🔹 NEW: Tiranga-style modal states + limits
   const [betModalOpen, setBetModalOpen] = useState(false);
