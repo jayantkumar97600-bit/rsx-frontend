@@ -1,196 +1,247 @@
-// src/components/BetAmountModal.jsx
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useMemo, useState } from "react";
+
+const QUICK_AMOUNTS = [1, 10, 100, 1000, 5000];
+const MULTIPLIERS = [1, 5, 10, 20, 50, 100];
 
 export default function BetAmountModal({
   isOpen,
   onClose,
-  onConfirm,      // (totalAmount) => void
+  onConfirm,
   balance = 0,
-  betLabel = "", // "Green", "Red 3", "Small" etc
-  gameLabel = "WinGo 30sec",
-  minBet = 10,
-  maxBet = 100000,
+  betLabel = "Select bet",
+  gameLabel = "RSX WINGOD",
+  minBet = 1,
+  maxBet = 1000000,
 }) {
-  const [unitAmount, setUnitAmount] = useState(10);  // Balance chips se
-  const [quantity, setQuantity] = useState(1);       // X1, X5, etc
+  const [unitAmount, setUnitAmount] = useState(10);
+  const [quantity, setQuantity] = useState(1);
+  const [customAmount, setCustomAmount] = useState("");
+  const [agree, setAgree] = useState(true);
   const [error, setError] = useState("");
-
-  const balanceChips = [1, 10, 100, 1000];          // upar wale buttons
-  const quantityMultipliers = [1, 5, 10, 20, 50, 100];
-
-  const totalAmount = useMemo(
-    () => unitAmount * quantity,
-    [unitAmount, quantity]
-  );
-
-  useEffect(() => {
-    // Jab bhi modal open ho, reset state
-    if (isOpen) {
-      setUnitAmount(10);
-      setQuantity(1);
-      setError("");
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!totalAmount) {
-      setError("");
-      return;
-    }
-    if (totalAmount < minBet) {
-      setError(`Min bet ₹${minBet}`);
-    } else if (totalAmount > maxBet) {
-      setError(`Max bet ₹${maxBet}`);
-    } else if (totalAmount > balance) {
-      setError("Insufficient balance");
-    } else {
-      setError("");
-    }
-  }, [totalAmount, minBet, maxBet, balance]);
 
   if (!isOpen) return null;
 
+  const totalAmount = useMemo(() => {
+    const custom = Number(customAmount);
+    if (!Number.isNaN(custom) && custom > 0) {
+      return Math.floor(custom);
+    }
+    return unitAmount * quantity;
+  }, [unitAmount, quantity, customAmount]);
+
   const handleConfirm = () => {
-    if (error || totalAmount <= 0) return;
+    setError("");
+
+    if (!agree) {
+      setError("Please accept the rules before placing a trade.");
+      return;
+    }
+
+    if (!totalAmount || totalAmount <= 0) {
+      setError("Enter a valid amount.");
+      return;
+    }
+
+    if (totalAmount < minBet) {
+      setError(`Minimum stake is ₹${minBet}.`);
+      return;
+    }
+
+    if (totalAmount > maxBet) {
+      setError(`Maximum stake is ₹${maxBet.toLocaleString("en-IN")}.`);
+      return;
+    }
+
+    if (totalAmount > balance) {
+      setError("Insufficient balance for this stake.");
+      return;
+    }
+
     onConfirm(totalAmount);
   };
 
+  const handleCustomChange = (e) => {
+    const value = e.target.value.replace(/[^\d]/g, "");
+    setCustomAmount(value);
+  };
+
+  const activeChip = useMemo(() => {
+    if (customAmount) return null;
+    return unitAmount;
+  }, [unitAmount, customAmount]);
+
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/60 sm:items-center">
-      {/* Card */}
-      <div className="w-full max-w-md rounded-t-3xl sm:rounded-3xl bg-slate-900 overflow-hidden shadow-xl border border-slate-700">
-        {/* Header gradient */}
-        <div className="bg-gradient-to-b from-sky-500 to-sky-400 px-4 py-3 text-center">
-          <p className="text-xs text-slate-100 opacity-80">{gameLabel}</p>
-          <p className="mt-1 rounded-xl bg-slate-50/90 text-slate-900 text-sm font-semibold py-1">
-            {betLabel || "Select"}
-          </p>
+    <div className="fixed inset-0 z-40 flex items-end justify-center sm:items-center bg-black/60 backdrop-blur-sm">
+      <div className="w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl bg-slate-950/95 border border-slate-800 shadow-[0_-24px_60px_rgba(0,0,0,0.9)] overflow-hidden">
+        {/* HEADER */}
+        <div className="px-4 pt-3 pb-2 bg-gradient-to-r from-sky-500/20 via-emerald-500/10 to-purple-500/20 border-b border-slate-800">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-sky-300">
+                {gameLabel}
+              </p>
+              <p className="text-sm text-slate-50 font-semibold">
+                {betLabel}
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-[11px] text-slate-300 px-2 py-1 rounded-full bg-slate-900/80 border border-slate-700 hover:border-rose-400 hover:text-rose-300 transition"
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
-        {/* Body */}
-        <div className="px-4 py-4 space-y-4 bg-slate-900">
-          {/* Balance row */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-200">Balance</span>
-              <span className="text-xs text-slate-400">
-                ₹{balance?.toLocaleString?.() ?? balance}
-              </span>
-            </div>
+        {/* BODY */}
+        <div className="px-4 py-3 space-y-3">
+          {/* BALANCE */}
+          <div className="flex items-center justify-between text-[11px]">
+            <p className="text-slate-400">Available balance</p>
+            <p className="text-emerald-300 font-semibold">
+              ₹ {balance.toLocaleString("en-IN")}
+            </p>
+          </div>
+
+          {/* QUICK CHIPS */}
+          <div className="space-y-1">
+            <p className="text-[11px] text-slate-300 font-semibold">
+              Quick chips
+            </p>
             <div className="flex gap-2">
-              {balanceChips.map((chip) => (
+              {QUICK_AMOUNTS.map((amt) => (
                 <button
-                  key={chip}
+                  key={amt}
                   type="button"
-                  onClick={() => setUnitAmount(chip)}
-                  className={`flex-1 py-2 rounded-xl text-sm font-semibold border 
-                  ${
-                    unitAmount === chip
-                      ? "bg-sky-500 text-white border-sky-400"
-                      : "bg-slate-800 text-slate-200 border-slate-600"
+                  onClick={() => {
+                    setUnitAmount(amt);
+                    if (!customAmount) {
+                      setQuantity(1);
+                    }
+                    setCustomAmount("");
+                  }}
+                  className={`flex-1 py-1.5 rounded-xl text-[11px] font-medium border ${
+                    activeChip === amt
+                      ? "bg-sky-500 text-slate-950 border-sky-300 shadow"
+                      : "bg-slate-900 border-slate-700 text-slate-200"
                   }`}
                 >
-                  {chip}
+                  ₹ {amt.toLocaleString("en-IN")}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Quantity row */}
-          <div>
-            <p className="text-sm text-slate-200 mb-2">Quantity</p>
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <button
-                type="button"
-                onClick={() =>
-                  setQuantity((q) => (q > 1 ? q - 1 : 1))
-                }
-                className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-800 text-xl text-slate-100 border border-slate-600"
-              >
-                -
-              </button>
-              <div className="min-w-[64px] h-10 flex items-center justify-center rounded-xl bg-slate-950 text-slate-50 text-base font-semibold border border-sky-500">
-                {quantity}
+          {/* QUANTITY */}
+          <div className="space-y-1">
+            <p className="text-[11px] text-slate-300 font-semibold">
+              Quantity / multiplier
+            </p>
+            <div className="flex gap-2">
+              {MULTIPLIERS.map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => {
+                    setQuantity(m);
+                    setCustomAmount("");
+                  }}
+                  className={`flex-1 py-1.5 rounded-xl text-[11px] font-medium border ${
+                    !customAmount && quantity === m
+                      ? "bg-emerald-500 text-slate-950 border-emerald-300 shadow"
+                      : "bg-slate-900 border-slate-700 text-slate-200"
+                  }`}
+                >
+                  x{m}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* CUSTOM AMOUNT */}
+          <div className="space-y-1">
+            <p className="text-[11px] text-slate-300 font-semibold">
+              Or enter custom amount
+            </p>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 flex items-center gap-1 rounded-2xl bg-slate-900 border border-slate-700 px-3 py-2">
+                <span className="text-[11px] text-slate-400">₹</span>
+                <input
+                  value={customAmount}
+                  onChange={handleCustomChange}
+                  inputMode="numeric"
+                  placeholder="Any amount"
+                  className="flex-1 bg-transparent outline-none text-[13px] text-slate-50 placeholder:text-slate-500"
+                />
               </div>
               <button
                 type="button"
-                onClick={() => setQuantity((q) => q + 1)}
-                className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-800 text-xl text-slate-100 border border-slate-600"
+                onClick={() => setCustomAmount("")}
+                className="text-[10px] px-2 py-1 rounded-full bg-slate-900 border border-slate-700 text-slate-300"
               >
-                +
+                Clear
               </button>
             </div>
+            <p className="text-[10px] text-slate-500">
+              Min ₹{minBet} · Max ₹{maxBet.toLocaleString("en-IN")}
+            </p>
+          </div>
 
-            <div className="flex flex-wrap gap-2 justify-center">
-              {quantityMultipliers.map((mul) => (
-                <button
-                  key={mul}
-                  type="button"
-                  onClick={() => setQuantity(mul)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold border 
-                  ${
-                    quantity === mul
-                      ? "bg-sky-500 text-white border-sky-400"
-                      : "bg-slate-800 text-slate-200 border-slate-600"
-                  }`}
-                >
-                  X{mul}
-                </button>
-              ))}
+          {/* SUMMARY */}
+          <div className="rounded-2xl bg-slate-900/80 border border-slate-700 px-3 py-2 flex items-center justify-between text-[11px]">
+            <div>
+              <p className="text-slate-400">Total stake</p>
+              <p className="text-sm text-emerald-300 font-semibold">
+                ₹ {totalAmount.toLocaleString("en-IN")}
+              </p>
+            </div>
+            <div className="text-right text-[10px] text-slate-500">
+              <p>
+                Chips: ₹{unitAmount} × {quantity}
+              </p>
+              {customAmount && <p>Custom overrides chips</p>}
             </div>
           </div>
 
-          {/* Error + info */}
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-slate-400">
-              Min ₹{minBet} • Max ₹{maxBet}
-            </span>
-            {error ? (
-              <span className="text-red-400 font-medium">{error}</span>
-            ) : (
-              <span className="text-emerald-400">
-                Total ₹{totalAmount || 0}
-              </span>
-            )}
-          </div>
-
-          {/* "I agree" row (optional) */}
-          <div className="flex items-center gap-2 text-xs text-slate-300">
+          {/* AGREEMENT */}
+          <label className="flex items-center gap-2 text-[11px] text-slate-300 cursor-pointer">
             <button
               type="button"
-              className="w-4 h-4 rounded-full border border-sky-400 bg-sky-500 flex items-center justify-center"
+              onClick={() => setAgree((a) => !a)}
+              className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                agree
+                  ? "border-sky-400 bg-sky-500"
+                  : "border-slate-600 bg-slate-900"
+              }`}
             >
-              <div className="w-2 h-2 rounded-full bg-white" />
+              {agree && <span className="text-[10px] text-slate-950">✓</span>}
             </button>
             <span>
-              I agree{" "}
-              <span className="text-red-400 font-semibold">
-                《Pre-sale rules》
-              </span>
+              I understand this is a{" "}
+              <span className="text-sky-300">virtual prediction game</span>.
             </span>
-          </div>
+          </label>
+
+          {error && (
+            <p className="text-[11px] text-rose-300 bg-rose-500/10 border border-rose-500/60 rounded-xl px-3 py-2">
+              {error}
+            </p>
+          )}
         </div>
 
-        {/* Footer buttons */}
+        {/* FOOTER ACTIONS */}
         <div className="flex">
           <button
-            type="button"
             onClick={onClose}
-            className="flex-1 py-3 text-sm font-semibold text-slate-200 bg-slate-800"
+            className="flex-1 py-2.5 text-[13px] font-medium bg-slate-900/90 text-slate-200 border-t border-slate-800"
           >
             Cancel
           </button>
           <button
-            type="button"
-            disabled={!!error || totalAmount <= 0}
             onClick={handleConfirm}
-            className={`flex-1 py-3 text-sm font-semibold ${
-              error || totalAmount <= 0
-                ? "bg-slate-600 text-slate-300"
-                : "bg-sky-500 text-white"
-            }`}
+            className="flex-1 py-2.5 text-[13px] font-semibold bg-gradient-to-r from-emerald-400 via-sky-400 to-amber-300 text-slate-950 border-t border-emerald-400 shadow-[0_-6px_25px_rgba(34,197,94,0.7)]"
           >
-            Total amount ₹{totalAmount || 0}
+            Confirm trade
           </button>
         </div>
       </div>
