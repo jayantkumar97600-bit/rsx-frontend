@@ -3839,7 +3839,7 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
         onClick={handleSoftRefresh}
         className="text-[10px] px-2 py-1 rounded-full bg-slate-900/90 border border-sky-400/60 text-sky-300 shadow-[0_0_12px_rgba(56,189,248,0.5)] hover:border-emerald-400 hover:text-emerald-200 hover:shadow-[0_0_16px_rgba(52,211,153,0.7)] transition"
       >
-        🔄 Refresh round
+         Refresh round
       </button>
       
       {user.role === "admin" && (
