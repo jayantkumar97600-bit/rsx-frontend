@@ -3737,6 +3737,25 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
+  const handleSoftRefresh = () => {
+    // current gameType ke hisaab se naya period + timer set karega
+    resetPeriodForGameType(gameType);
+
+    // bets + stake reset
+    setSelectedBetKind(null);
+    setSelectedBetValue(null);
+    setSelectedAmount(null);
+
+    // result modal band
+    setShowResultModal(false);
+    setResultModalData(null);
+
+    // message normal
+    setMessage("Choose color / number / big-small and stake amount.");
+    setMessageType("info");
+  };
+
+
   const messageBg =
     messageType === "win"
       ? "bg-emerald-500/10 border-emerald-400 text-emerald-300"
@@ -3797,13 +3816,6 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
         <h1 className="text-[18px] font-bold tracking-wide">
           Live Color · Number
         </h1>
-        <button
-          onClick={() => window.location.reload()}
-          className="px-4 py-2 rounded-2xl bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-500 text-slate-900 text-[11px] font-semibold shadow-[0_0_15px_rgba(99,102,241,0.5)] hover:shadow-[0_0_22px_rgba(99,102,241,0.8)] transition"
-        >
-          🔄 Refresh
-        
-        </button>
         <p className="text-[10px] text-slate-400">
           Real-time rounds · Multi-period engine · Auto wallet sync
         </p>
@@ -3823,6 +3835,13 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
       )}
     </p>
     <div className="flex gap-2 justify-end mt-1">
+      <button
+        onClick={handleSoftRefresh}
+        className="text-[10px] px-2 py-1 rounded-full bg-slate-900/90 border border-sky-400/60 text-sky-300 shadow-[0_0_12px_rgba(56,189,248,0.5)] hover:border-emerald-400 hover:text-emerald-200 hover:shadow-[0_0_16px_rgba(52,211,153,0.7)] transition"
+      >
+        🔄 Refresh round
+      </button>
+      
       {user.role === "admin" && (
         <button
           onClick={() => setShowAdmin(true)}
