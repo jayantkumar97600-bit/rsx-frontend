@@ -3296,10 +3296,7 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
   const beepAudioRef = useRef(null);
 
   // 🔹 NEW: Tiranga-style modal states + limits
-  const [betModalOpen, setBetModalOpen] = useState(false);
-  const [activeBet, setActiveBet] = useState(null); // { betKind, betValue, label }
-  const MIN_BET = 10;
-  const MAX_BET = 100000;
+  
 
   const COLOR_OPTIONS = [
     { id: "G", label: "Green", multiplier: 2 },
