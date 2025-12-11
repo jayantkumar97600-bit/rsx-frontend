@@ -10,7 +10,7 @@ import QRCode from "qrcode";
 
 const UPI_ID = "843973600@ybl"; // <-- REPLACE with your UPI
 const UPI_NAME = "RSX WINGOD";
-const [reference, setReference] = useState("");
+
 
 
 function makeUpiUrl(pa, pn, am) {
@@ -30,6 +30,9 @@ export default function DepositPanel({ token, onDepositSuccess }) {
   const [utr, setUtr] = useState("");
   const [showCheck, setShowCheck] = useState(false);
   const toastRef = useRef(null);
+
+  const [reference, setReference] = useState("");
+
 
   useEffect(() => {
     if (!amount || Number(amount) <= 0) {
@@ -99,7 +102,7 @@ export default function DepositPanel({ token, onDepositSuccess }) {
 
       if (proofFile) form.append("proof", proofFile);
 
-      const res = await fetch("/api/deposit/initiate", {
+      const res = await fetch("/api/wallet/deposit", {
         method: "POST",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: form,
