@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import ResultModalAdvanced from "./components/ResultModalAdvanced";
 
 import BetAmountModal from "./components/BetAmountModal"; // path adjust karo agar alag ho
+import DepositPanel from "./components/DepositPanel";
+
 
 
 export const API_BASE = "https://stormy-roz-rsxbackend-9574b2c9.koyeb.app";
