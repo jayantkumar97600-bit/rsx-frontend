@@ -1628,38 +1628,90 @@ function GameLobby({
 
         {/* GAMES LIST */}
         <div className="px-5 pb-3 flex-1 overflow-y-auto custom-scroll space-y-3">
-          {games.map((g) => (
-            <button
-              key={g.id}
-              onClick={g.onClick}
-              className="w-full text-left rounded-2xl bg-slate-900/80 border border-slate-700 overflow-hidden hover:border-sky-400/80 hover:shadow-[0_16px_40px_rgba(56,189,248,0.45)] transition"
-            >
-              <div
-                className={`h-16 bg-gradient-to-r ${g.gradient} opacity-70`}
-              />
-              <div className="px-4 py-3 flex items-center justify-between -mt-8 relative">
+  {games.map((g) => {
+    // Special RSX card with hero image
+    if (g.id === "godwin") {
+      return (
+        <button
+          key={g.id}
+          onClick={g.onClick}
+          className="w-full text-left rounded-2xl bg-slate-900/80 border border-slate-700 overflow-hidden hover:border-sky-400/80 hover:shadow-[0_16px_40px_rgba(56,189,248,0.45)] transition"
+        >
+          {/* HERO IMAGE */}
+          <div className="relative w-full h-40 md:h-44 overflow-hidden">
+            <img
+              src="/images/rsx-hero.jpg"
+              alt="RSX WINGOD"
+              className="w-full h-full object-cover object-center"
+              onError={(e) => (e.target.style.display = "none")}
+            />
+
+            {/* Top tags on image */}
+            <div className="absolute top-3 left-3 flex gap-2">
+              <span className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 backdrop-blur-sm">
+                {g.status}
+              </span>
+              <span className="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-400/40 backdrop-blur-sm">
+                {g.tag}
+              </span>
+            </div>
+
+            {/* bottom dark strip with title + subtitle + enter */}
+            <div className="absolute left-0 right-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-4 py-3">
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-slate-200 font-semibold">
-                    {g.title}
-                  </p>
-                  <p className="text-[11px] text-slate-400">{g.subtitle}</p>
-                  <div className="mt-1 flex items-center gap-2 text-[10px]">
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-400/60 text-emerald-300">
-                      {g.status}
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-400/60 text-amber-300">
-                      {g.tag}
-                    </span>
-                  </div>
+                  <p className="text-xs text-white font-semibold">{g.title}</p>
+                  <p className="text-[11px] text-slate-300">{g.subtitle}</p>
                 </div>
-                <div className="text-right text-[10px] text-slate-400">
-                  <p>Tap to open</p>
-                  <p className="text-sky-300 font-semibold">ENTER ▶</p>
+
+                <div className="text-right">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      g.onClick && g.onClick();
+                    }}
+                    className="px-3 py-1 rounded-full bg-emerald-400 text-slate-950 text-xs font-semibold shadow"
+                  >
+                    ENTER ▶
+                  </button>
                 </div>
               </div>
-            </button>
-          ))}
+            </div>
+          </div>
+        </button>
+      );
+    }
+
+    // Default simple card for other games
+    return (
+      <button
+        key={g.id}
+        onClick={g.onClick}
+        className="w-full text-left rounded-2xl bg-slate-900/80 border border-slate-700 overflow-hidden hover:border-sky-400/80 hover:shadow-[0_16px_40px_rgba(56,189,248,0.45)] transition"
+      >
+        <div className={`h-16 bg-gradient-to-r ${g.gradient} opacity-70`} />
+        <div className="px-4 py-3 flex items-center justify-between -mt-8 relative">
+          <div>
+            <p className="text-xs text-slate-200 font-semibold">{g.title}</p>
+            <p className="text-[11px] text-slate-400">{g.subtitle}</p>
+            <div className="mt-1 flex items-center gap-2 text-[10px]">
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-400/60 text-emerald-300">
+                {g.status}
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-400/60 text-amber-300">
+                {g.tag}
+              </span>
+            </div>
+          </div>
+          <div className="text-right text-[10px] text-slate-400">
+            <p>Tap to open</p>
+            <p className="text-sky-300 font-semibold">ENTER ▶</p>
+          </div>
         </div>
+      </button>
+    );
+  })}
+</div>
 
         {/* BOTTOM ACTION BAR */}
         <div className="px-5 py-3 border-t border-slate-800/80 bg-slate-950/80 flex items-center justify-between text-[11px]">
