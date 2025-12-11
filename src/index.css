@@ -74,3 +74,19 @@
 .custom-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
+/* pop-in animation */
+@keyframes popIn {
+  0% { transform: scale(0.7); opacity: 0; filter: blur(6px); }
+  60% { transform: scale(1.03); opacity: 1; filter: blur(0px); }
+  100% { transform: scale(1); opacity: 1; filter: blur(0px); }
+}
+.animate-popIn {
+  animation: popIn 420ms cubic-bezier(.2,.9,.2,1);
+}
+
+/* small pulse for amount */
+@keyframes pulseAmount {
+  0% { transform: scale(0.98); opacity: .95; }
+  50% { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(0.98); opacity: .95; }
+}

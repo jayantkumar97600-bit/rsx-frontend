@@ -1,5 +1,8 @@
 import { useEffect, useState, useRef } from "react";
+import ResultModalAdvanced from "./components/ResultModalAdvanced";
+
 import BetAmountModal from "./components/BetAmountModal"; // path adjust karo agar alag ho
+
 
 export const API_BASE = "https://stormy-roz-rsxbackend-9574b2c9.koyeb.app";
 
@@ -3562,7 +3565,7 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
       period: currentPeriod,
     });
     setShowResultModal(true);
-    setTimeout(() => setShowResultModal(false), 3000);
+    
   } catch (e) {
     console.error("Settle error", e);
     setMessage("Network error while settling bets.");
@@ -4325,38 +4328,15 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
 
 
             {/* RESULT MODAL (same as pehle) */}
-            {showResultModal && resultModalData && (
-              <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-20">
-                <div className="bg-slate-900 border border-slate-700 rounded-3xl px-4 py-4 w-72 text-center shadow-xl">
-                  <p
-                    className={`text-sm font-semibold ${
-                      resultModalData.status === "win"
-                        ? "text-emerald-300"
-                        : "text-rose-300"
-                    }`}
-                  >
-                    {resultModalData.status === "win"
-                      ? "Congratulations"
-                      : "Better luck next time"}
-                  </p>
-                  <p className="text-[11px] text-slate-300 mt-1">
-                    Period {resultModalData.period}
-                  </p>
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    Result {resultModalData.resultNumber} (
-                    {resultModalData.resultColor}, {resultModalData.size})
-                  </p>
-                  {resultModalData.status === "win" && (
-                    <p className="text-lg text-emerald-300 mt-2 font-bold">
-                      ₹ {resultModalData.amount}
-                    </p>
-                  )}
-                  <p className="text-[10px] text-slate-500 mt-2">
-                    Auto close in a few seconds
-                  </p>
-                </div>
-              </div>
-            )}
+            <ResultModalAdvanced
+              isOpen={showResultModal}
+              data={resultModalData}
+              onClose={() => {
+                setShowResultModal(false);
+                setResultModalData(null);
+              }}
+            />
+
           </div>
         </div>
 
