@@ -2007,6 +2007,7 @@ function WalletScreen({ user, token, onBackToLobby, onLogout, onUserUpdate }) {
     }
   };
 
+
   // ---------------- UI ----------------
   return (
   <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-3">
@@ -2215,7 +2216,8 @@ function WalletScreen({ user, token, onBackToLobby, onLogout, onUserUpdate }) {
       )}
     </div>
   </div>
-);
+  );
+}
 
 
 
