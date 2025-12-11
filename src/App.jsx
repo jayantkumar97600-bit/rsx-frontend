@@ -7,7 +7,7 @@ import BetAmountModal from "./components/BetAmountModal"; // path adjust karo ag
 export const API_BASE = "https://stormy-roz-rsxbackend-9574b2c9.koyeb.app";
 
 
-const MERCHANT_UPI = "843973600@ybl"; // yahan apni UPI ID daal
+const MERCHANT_UPI = "7417034057-2@ibl"; // yahan apni UPI ID daal
 const MERCHANT_NAME = "RSX WINGOD";     // naam jo UPI me dikhe
 
 
