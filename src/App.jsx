@@ -2009,272 +2009,214 @@ function WalletScreen({ user, token, onBackToLobby, onLogout, onUserUpdate }) {
 
   // ---------------- UI ----------------
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-3">
-      <div className="w-full max-w-md bg-slate-900 rounded-3xl border border-slate-800 p-5 flex flex-col gap-4">
-        {/* Header */}
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onBackToLobby}
-              className="text-[11px] px-2 py-1 rounded-full bg-slate-800 text-slate-200 border border-slate-600"
-            >
-              ← Lobby
-            </button>
-            <div>
-              <h2 className="text-lg font-bold">Wallet</h2>
-              <p className="text-xs text-slate-400">
-                Manage deposits, withdrawals & game funds.
-              </p>
-            </div>
-          </div>
+  <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-3">
+    <div className="w-full max-w-md bg-slate-900 rounded-3xl border border-slate-800 p-5 flex flex-col gap-4">
+      {/* Header */}
+      <div className="flex justify-between items-start">
+        <div className="flex items-center gap-2">
           <button
-            onClick={onLogout}
-            className="text-[10px] text-rose-400 underline"
+            onClick={onBackToLobby}
+            className="text-[11px] px-2 py-1 rounded-full bg-slate-800 text-slate-200 border border-slate-600"
           >
-            Logout
+            ← Lobby
           </button>
-        </div>
-
-        {/* Balance Card */}
-        <div className="rounded-2xl bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600 p-4 shadow-lg">
-          <p className="text-[11px] text-sky-100">Available Balance</p>
-          <p className="text-2xl font-bold mt-1">
-            ₹ {balance.toLocaleString("en-IN")}
-          </p>
-          <p className="text-[11px] text-sky-100/80 mt-1">
-            User: {user.username}{" "}
-            {user.role === "admin" && <span>· Admin</span>}
-          </p>
-          <p className="text-[10px] text-sky-100/70 mt-2">
-            Add funds by creating a deposit request. Payouts are processed on
-            verified withdrawal requests.
-          </p>
-        </div>
-
-        {/* Quick stats */}
-        <div className="grid grid-cols-3 gap-2 text-[11px]">
-          <div className="bg-slate-800 rounded-xl p-2 text-center border border-slate-700">
-            <p className="text-slate-300">Total Games</p>
-            <p className="text-lg font-semibold mt-1 text-sky-300">1</p>
-          </div>
-          <div className="bg-slate-800 rounded-xl p-2 text-center border border-slate-700">
-            <p className="text-slate-300">Status</p>
-            <p className="text-xs mt-1 text-emerald-300">Active</p>
-          </div>
-          <div className="bg-slate-800 rounded-xl p-2 text-center border border-slate-700">
-            <p className="text-slate-300">Mode</p>
-            <p className="text-xs mt-1 text-yellow-300">Live Panel</p>
-          </div>
-        </div>
-
-        {/* Deposit & Withdraw */}
-        <div className="grid grid-cols-1 gap-3 text-xs">
-          {/* Deposit */}
-          <div className="bg-slate-800 rounded-2xl p-3 border border-emerald-500/40">
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-slate-100 font-semibold">Deposit</p>
-              <span className="text-[10px] text-emerald-300 bg-emerald-500/10 px-2 py-[2px] rounded-full border border-emerald-400/60">
-                UPI · Manual approval
-              </span>
-            </div>
-
-            <p className="text-[10px] text-emerald-300 mb-1">
-              ₹300–₹999: ~3% bonus · ₹1000–₹4999: ~5% bonus · ₹5000+: ~8% bonus
-            </p>
-
-            <div className="mb-2">
-              <p className="text-[11px] text-slate-300 mb-1">Amount (₹)</p>
-              <input
-                value={depositAmount}
-                onChange={(e) => setDepositAmount(e.target.value)}
-                className="w-full bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
-                placeholder="Enter amount (min ₹300)"
-                type="number"
-              />
-            </div>
-
-            {Number(depositAmount) >= 300 && (
-              <p className="text-[10px] text-emerald-400 mb-2">
-                Estimated bonus: ~{computeDepositBonusPercent(depositAmount)}% (
-                approx ₹{computeDepositBonusAmount(depositAmount)})
-              </p>
-            )}
-
-            <div className="mb-2">
-              <p className="text-[11px] text-slate-300 mb-1">Your UPI ID</p>
-              <input
-                value={upiId}
-                onChange={(e) => setUpiId(e.target.value)}
-                className="w-full bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
-                placeholder="your-upi@bank"
-              />
-            </div>
-
-            <button
-              type="button"
-              onClick={openUpiApp}
-              disabled={depositing}
-              className="w-full mt-2 py-1.5 rounded-lg bg-emerald-500 text-slate-900 font-semibold text-xs disabled:opacity-60"
-            >
-              {depositing ? "Processing..." : "Deposit via UPI"}
-            </button>
-
-            <p className="text-[10px] text-slate-500 mt-1">
-              Tap deposit to open your UPI app. After completing the payment,
-              enter the UTR / Transaction ID to submit your deposit request.
+          <div>
+            <h2 className="text-lg font-bold">Wallet</h2>
+            <p className="text-xs text-slate-400">
+              Manage deposits, withdrawals & game funds.
             </p>
           </div>
-
-          {/* Withdraw */}
-          <form
-            onSubmit={handleWithdraw}
-            className="bg-slate-800 rounded-2xl p-3 border border-rose-500/40"
-          >
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-slate-100 font-semibold">Withdraw</p>
-              <span className="text-[10px] text-rose-300 bg-rose-500/10 px-2 py-[2px] rounded-full border border-rose-400/60">
-                Manual review & payout
-              </span>
-            </div>
-
-            <div className="mb-2">
-              <p className="text-[11px] text-slate-300 mb-1">Amount (₹)</p>
-              <input
-                value={withdrawAmount}
-                onChange={(e) => setWithdrawAmount(e.target.value)}
-                className="w-full bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
-                placeholder="Enter amount (min ₹500)"
-                type="number"
-              />
-            </div>
-
-            <div className="mb-2">
-              <p className="text-[11px] text-slate-300 mb-1">Method</p>
-              <select
-                value={method}
-                onChange={(e) => setMethod(e.target.value)}
-                className="w-full bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
-              >
-                <option value="UPI">UPI</option>
-                <option value="Bank">Bank transfer</option>
-              </select>
-            </div>
-
-            {method === "UPI" && (
-              <div className="mb-2">
-                <p className="text-[11px] text-slate-300 mb-1">UPI ID</p>
-                <input
-                  value={upiId}
-                  onChange={(e) => setUpiId(e.target.value)}
-                  className="w-full bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
-                  placeholder="your-upi@bank"
-                />
-              </div>
-            )}
-
-            {method === "Bank" && (
-              <>
-                <div className="mb-2">
-                  <p className="text-[11px] text-slate-300 mb-1">
-                    Bank Name
-                  </p>
-                  <input
-                    value={bankName}
-                    onChange={(e) => setBankName(e.target.value)}
-                    className="w-full bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
-                    placeholder="e.g. State Bank of India"
-                  />
-                </div>
-
-                <div className="mb-2">
-                  <p className="text-[11px] text-slate-300 mb-1">
-                    Account Number
-                  </p>
-                  <input
-                    value={bankAccount}
-                    onChange={(e) => setBankAccount(e.target.value)}
-                    className="w-full bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
-                    placeholder="Enter account number"
-                    type="number"
-                  />
-                </div>
-
-                <div className="mb-2">
-                  <p className="text-[11px] text-slate-300 mb-1">
-                    IFSC Code
-                  </p>
-                  <input
-                    value={ifsc}
-                    onChange={(e) =>
-                      setIfsc(e.target.value.toUpperCase())
-                    }
-                    className="w-full bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
-                    placeholder="e.g. SBIN0012345"
-                  />
-                </div>
-              </>
-            )}
-
-            <button
-              type="submit"
-              disabled={withdrawing}
-              className="w-full mt-2 py-1.5 rounded-lg bg-rose-500 text-slate-900 font-semibold text-xs disabled:opacity-60"
-            >
-              {withdrawing ? "Submitting..." : "Withdraw request"}
-            </button>
-          </form>
         </div>
-
-        {info && (
-          <p className="text-[11px] text-slate-300 bg-slate-800 px-3 py-2 rounded-2xl border border-slate-700">
-            {info}
-          </p>
-        )}
-
-        <p className="text-[10px] text-slate-500 text-center mt-1">
-          Always double-check UPI and bank details before confirming any
-          transaction.
-        </p>
-
-        {showUTRPopup && (
-          <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
-            <div className="bg-slate-900 border border-slate-700 p-5 rounded-2xl w-full max-w-sm">
-              <h3 className="text-lg font-bold mb-2">
-                Enter UTR / Transaction ID
-              </h3>
-              <p className="text-[11px] text-slate-400 mb-3">
-                Payment complete karne ke baad UPI app me dikhne wali UTR /
-                reference ID yahaan daalein.
-              </p>
-
-              <input
-                value={utrValue}
-                onChange={(e) => setUtrValue(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 mb-3 text-xs"
-                placeholder="Enter UPI UTR / reference"
-              />
-
-              <button
-                onClick={submitUTR}
-                disabled={depositing}
-                className="w-full py-2 bg-emerald-500 text-slate-900 rounded-lg font-semibold text-xs disabled:opacity-60"
-              >
-                {depositing ? "Submitting..." : "Submit Deposit Request"}
-              </button>
-
-              <button
-                onClick={() => setShowUTRPopup(false)}
-                className="mt-2 w-full text-center text-[11px] text-slate-400 underline"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
+        <button onClick={onLogout} className="text-[10px] text-rose-400 underline">
+          Logout
+        </button>
       </div>
+
+      {/* Balance Card */}
+      <div className="rounded-2xl bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600 p-4 shadow-lg">
+        <p className="text-[11px] text-sky-100">Available Balance</p>
+        <p className="text-2xl font-bold mt-1">₹ {balance.toLocaleString("en-IN")}</p>
+        <p className="text-[11px] text-sky-100/80 mt-1">
+          User: {user.username} {user.role === "admin" && <span>· Admin</span>}
+        </p>
+        <p className="text-[10px] text-sky-100/70 mt-2">
+          Add funds by creating a deposit request. Payouts are processed on verified withdrawal requests.
+        </p>
+      </div>
+
+      {/* Quick stats */}
+      <div className="grid grid-cols-3 gap-2 text-[11px]">
+        <div className="bg-slate-800 rounded-xl p-2 text-center border border-slate-700">
+          <p className="text-slate-300">Total Games</p>
+          <p className="text-lg font-semibold mt-1 text-sky-300">1</p>
+        </div>
+        <div className="bg-slate-800 rounded-xl p-2 text-center border border-slate-700">
+          <p className="text-slate-300">Status</p>
+          <p className="text-xs mt-1 text-emerald-300">Active</p>
+        </div>
+        <div className="bg-slate-800 rounded-xl p-2 text-center border border-slate-700">
+          <p className="text-slate-300">Mode</p>
+          <p className="text-xs mt-1 text-yellow-300">Live Panel</p>
+        </div>
+      </div>
+
+      {/* Deposit panel (replaces old deposit form) */}
+      {/* Note: DepositPanel accepts optional token prop and onDepositSuccess callback */}
+      <div className="mt-2">
+        <DepositPanel
+          token={token}
+          onDepositSuccess={async (d) => {
+            console.log("Deposit created", d);
+            try {
+              if (typeof fetchBalance === "function") {
+                await fetchBalance();
+              }
+              // if you have a fetchUser() or similar, call it here to refresh user state
+              // if (typeof fetchUser === "function") await fetchUser();
+            } catch (e) {
+              // ignore errors from refresh
+            }
+          }}
+        />
+      </div>
+
+      {/* Withdraw */}
+      <form
+        onSubmit={handleWithdraw}
+        className="bg-slate-800 rounded-2xl p-3 border border-rose-500/40"
+      >
+        <div className="flex justify-between items-center mb-2">
+          <p className="text-slate-100 font-semibold">Withdraw</p>
+          <span className="text-[10px] text-rose-300 bg-rose-500/10 px-2 py-[2px] rounded-full border border-rose-400/60">
+            Manual review & payout
+          </span>
+        </div>
+
+        <div className="mb-2">
+          <p className="text-[11px] text-slate-300 mb-1">Amount (₹)</p>
+          <input
+            value={withdrawAmount}
+            onChange={(e) => setWithdrawAmount(e.target.value)}
+            className="w-full bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
+            placeholder="Enter amount (min ₹500)"
+            type="number"
+          />
+        </div>
+
+        <div className="mb-2">
+          <p className="text-[11px] text-slate-300 mb-1">Method</p>
+          <select
+            value={method}
+            onChange={(e) => setMethod(e.target.value)}
+            className="w-full bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
+          >
+            <option value="UPI">UPI</option>
+            <option value="Bank">Bank transfer</option>
+          </select>
+        </div>
+
+        {method === "UPI" && (
+          <div className="mb-2">
+            <p className="text-[11px] text-slate-300 mb-1">UPI ID</p>
+            <input
+              value={upiId}
+              onChange={(e) => setUpiId(e.target.value)}
+              className="w-full bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
+              placeholder="your-upi@bank"
+            />
+          </div>
+        )}
+
+        {method === "Bank" && (
+          <>
+            <div className="mb-2">
+              <p className="text-[11px] text-slate-300 mb-1">Bank Name</p>
+              <input
+                value={bankName}
+                onChange={(e) => setBankName(e.target.value)}
+                className="w-full bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
+                placeholder="e.g. State Bank of India"
+              />
+            </div>
+
+            <div className="mb-2">
+              <p className="text-[11px] text-slate-300 mb-1">Account Number</p>
+              <input
+                value={bankAccount}
+                onChange={(e) => setBankAccount(e.target.value)}
+                className="w-full bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
+                placeholder="Enter account number"
+                type="number"
+              />
+            </div>
+
+            <div className="mb-2">
+              <p className="text-[11px] text-slate-300 mb-1">IFSC Code</p>
+              <input
+                value={ifsc}
+                onChange={(e) => setIfsc(e.target.value.toUpperCase())}
+                className="w-full bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-700 outline-none text-xs"
+                placeholder="e.g. SBIN0012345"
+              />
+            </div>
+          </>
+        )}
+
+        <button
+          type="submit"
+          disabled={withdrawing}
+          className="w-full mt-2 py-1.5 rounded-lg bg-rose-500 text-slate-900 font-semibold text-xs disabled:opacity-60"
+        >
+          {withdrawing ? "Submitting..." : "Withdraw request"}
+        </button>
+      </form>
+
+      {info && (
+        <p className="text-[11px] text-slate-300 bg-slate-800 px-3 py-2 rounded-2xl border border-slate-700">
+          {info}
+        </p>
+      )}
+
+      <p className="text-[10px] text-slate-500 text-center mt-1">
+        Always double-check UPI and bank details before confirming any transaction.
+      </p>
+
+      {showUTRPopup && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
+          <div className="bg-slate-900 border border-slate-700 p-5 rounded-2xl w-full max-w-sm">
+            <h3 className="text-lg font-bold mb-2">Enter UTR / Transaction ID</h3>
+            <p className="text-[11px] text-slate-400 mb-3">
+              Payment complete karne ke baad UPI app me dikhne wali UTR / reference ID yahaan daalein.
+            </p>
+
+            <input
+              value={utrValue}
+              onChange={(e) => setUtrValue(e.target.value)}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 mb-3 text-xs"
+              placeholder="Enter UPI UTR / reference"
+            />
+
+            <button
+              onClick={submitUTR}
+              disabled={depositing}
+              className="w-full py-2 bg-emerald-500 text-slate-900 rounded-lg font-semibold text-xs disabled:opacity-60"
+            >
+              {depositing ? "Submitting..." : "Submit Deposit Request"}
+            </button>
+
+            <button
+              onClick={() => setShowUTRPopup(false)}
+              className="mt-2 w-full text-center text-[11px] text-slate-400 underline"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
-  );
-}
+  </div>
+);
+
 
 
 
@@ -4810,5 +4752,4 @@ if (screen === "account") {
       
     />
   );
-
 }
