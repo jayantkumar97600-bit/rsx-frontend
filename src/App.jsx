@@ -4669,13 +4669,14 @@ export default function App() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-black">
       <img 
-        src="/images/loader.png?v=1"
+        src="/images/loader.png?v=2"
         alt="Loading..."
-        className="w-full h-full object-cover aspect-[9/16]"
+        className="w-full h-full object-cover"
       />
     </div>
   );
 }
+
 
 
 
