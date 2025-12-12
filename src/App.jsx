@@ -4669,7 +4669,7 @@ export default function App() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-black animate-fadeIn">
       <img 
-        src="/loader.png" 
+        src="/images/loader.png" 
         alt="Loading..."
         className="w-full h-full object-cover animate-pulse"
       />
