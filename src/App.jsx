@@ -4671,11 +4671,12 @@ export default function App() {
       <img 
         src="/images/loader.png?v=1"
         alt="Loading..."
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover aspect-[9/16]"
       />
     </div>
   );
 }
+
 
 
 
