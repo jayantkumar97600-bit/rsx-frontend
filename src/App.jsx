@@ -4667,11 +4667,36 @@ export default function App() {
 
   if (checking) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">
-        Checking session
+      <div className="min-h-screen w-full bg-[#020617] flex flex-col items-center justify-center relative overflow-hidden">
+
+        {/* Background glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.20),transparent_60%)] pointer-events-none" />
+
+        {/* Fancy top + bottom gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-950 to-slate-950 pointer-events-none" />
+
+        {/* Loader Image */}
+        <img
+          src="/images/loader.jpg"
+          alt="Loading..."
+          className="relative w-28 h-28 animate-pulse drop-shadow-[0_0_20px_rgba(56,189,248,0.45)]"
+        />
+
+        {/* Text */}
+        <p className="mt-4 text-sm text-slate-300 tracking-wide animate-pulse">
+          Initializing session...
+        </p>
+
+        {/* Three bouncing dots */}
+        <div className="mt-6 flex gap-2">
+          <span className="w-2 h-2 rounded-full bg-sky-400 animate-bounce"></span>
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce delay-150"></span>
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-bounce delay-300"></span>
+        </div>
       </div>
     );
   }
+
 
   if (!user || !token) {
     return <AuthScreen onAuthSuccess={handleAuthSuccess} />;
