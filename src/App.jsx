@@ -4667,15 +4667,16 @@ export default function App() {
 
   if (checking) {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-black">
+    <div className="min-h-screen w-full flex items-center justify-center bg-black animate-fadeIn">
       <img 
         src="/loader.png" 
         alt="Loading..."
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover animate-pulse"
       />
     </div>
   );
 }
+
 
 
 
