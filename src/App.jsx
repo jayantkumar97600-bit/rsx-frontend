@@ -3409,9 +3409,9 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
       setResultsHistory(
         list.map((r) => ({
           period: r.period,
-          number: r.number ?? r.resultNumber,
-          color: r.color ?? r.resultColor, // "G","R","V"
-          size: r.size,
+          number: r.resultNumber,
+          color: r.resultColor,
+          size: r.resultSize || (r.resultNumber <= 4 ? "SMALL" : "BIG"),
         }))
       );
     } catch (e) {
