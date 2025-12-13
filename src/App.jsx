@@ -3287,6 +3287,8 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
 
   const [showAdmin, setShowAdmin] = useState(false);
   const [resultsHistory, setResultsHistory] = useState([]); // last 50 periods
+  const [historyTab, setHistoryTab] = useState("results");
+  const [tradeHistory, setTradeHistory] = useState([]);
   const [showResultModal, setShowResultModal] = useState(false);
   const [resultModalData, setResultModalData] = useState(null);
   const [showLockModal, setShowLockModal] = useState(false);
@@ -3420,6 +3422,23 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
     setResultsHistory([]);
   }
 };
+
+  const loadTradeHistory = async (type) => {
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/game/my-trades?gameType=${type}&limit=50`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    const data = await res.json();
+    setTradeHistory(Array.isArray(data) ? data : []);
+  } catch (e) {
+    console.error("trade history error", e);
+    setTradeHistory([]);
+  }
+};
+
 
 
   useEffect(() => {
@@ -4170,73 +4189,172 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
       <p className="text-xs text-slate-200 font-semibold">
         Recent results · {gameType}
       </p>
+    <div className="flex gap-2 mb-2">
+  <button
+    onClick={() => {
+      setHistoryTab("results");
+      loadResultsHistory(gameType);
+    }}
+    className={`flex-1 py-1.5 rounded-xl text-[11px] font-semibold ${
+      historyTab === "results"
+        ? "bg-emerald-500 text-black"
+        : "bg-slate-800 text-slate-300"
+    }`}
+  >
+    Result History
+  </button>
+
+  <button
+    onClick={() => {
+      setHistoryTab("trades");
+      loadTradeHistory(gameType);
+    }}
+    className={`flex-1 py-1.5 rounded-xl text-[11px] font-semibold ${
+      historyTab === "trades"
+        ? "bg-sky-500 text-black"
+        : "bg-slate-800 text-slate-300"
+    }`}
+  >
+    Trade History
+  </button>
+</div>
+
+      
+      
+      
       <p className="text-[10px] text-slate-500">
-        Last {resultsHistory.length || 0}
+        Last {historyTab === "results"
+          ? resultsHistory.length
+          : tradeHistory.length}
       </p>
     </div>
 
-    {resultsHistory.length === 0 ? (
-      <p className="text-[11px] text-slate-500">
-        No result history yet for this game.
-      </p>
-    ) : (
-      <div className="max-h-40 overflow-auto custom-scroll space-y-1.5 pr-1">
-        {resultsHistory.map((r, idx) => {
-          const col = r.color || "G";
-          const colorClass =
-            col === "G"
-              ? "bg-emerald-500"
-              : col === "R"
-              ? "bg-rose-500"
-              : "bg-indigo-500";
+    {/* ================= HISTORY CONTENT ================= */}
 
-          return (
-            <div
-              key={r.period + "-" + idx}
-              className="grid grid-cols-4 items-center bg-gradient-to-r from-slate-900/85 via-slate-950/85 to-slate-900/85 border border-slate-800 px-2 py-2 rounded-2xl text-[11px] shadow-sm hover:border-sky-400/40 hover:shadow-[0_0_18px_rgba(56,189,248,0.35)] transition"
-            >
-              {/* PERIOD */}
-              <span className="font-mono text-slate-300 text-[10px] overflow-hidden text-ellipsis whitespace-nowrap">
-                {r.period}
-              </span>
+{/* ---------- RESULT HISTORY ---------- */}
+{historyTab === "results" && (
+  resultsHistory.length === 0 ? (
+    <p className="text-[11px] text-slate-500">
+      No result history yet for this game.
+    </p>
+  ) : (
+    <div className="max-h-40 overflow-auto custom-scroll space-y-1.5 pr-1">
+      {resultsHistory.map((r, idx) => {
+        const col = r.color || "G";
+        const colorClass =
+          col === "G"
+            ? "bg-emerald-500"
+            : col === "R"
+            ? "bg-rose-500"
+            : "bg-indigo-500";
 
-              {/* NUMBER */}
+        return (
+          <div
+            key={r.period + "-" + idx}
+            className="grid grid-cols-4 items-center bg-gradient-to-r from-slate-900/85 via-slate-950/85 to-slate-900/85 border border-slate-800 px-2 py-2 rounded-2xl text-[11px] shadow-sm hover:border-sky-400/40 hover:shadow-[0_0_18px_rgba(56,189,248,0.35)] transition"
+          >
+            {/* PERIOD */}
+            <span className="font-mono text-slate-300 text-[10px] overflow-hidden text-ellipsis whitespace-nowrap">
+              {r.period}
+            </span>
+
+            {/* NUMBER */}
+            <span className="font-mono text-[14px] font-bold text-center">
+              {r.number}
+            </span>
+
+            {/* BIG / SMALL */}
+            <span className="text-center font-semibold">
+              {r.size}
+            </span>
+
+            {/* COLOR DOT */}
+            <span className="flex justify-center">
               <span
-                className={`font-mono text-[14px] font-bold text-center ${
-                  [1, 3, 7, 9].includes(Number(r.number))
-                    ? "text-emerald-400"
-                    : [2, 4, 6, 8].includes(Number(r.number))
-                    ? "text-rose-400"
-                    : Number(r.number) === 5
-                    ? "text-amber-400"
-                    : Number(r.number) === 0
-                    ? "text-violet-400"
-                    : "text-slate-200"
-                }`}
-              >
-                {r.number}
-              </span>
+                className={`w-3 h-3 rounded-full ${colorClass}`}
+              />
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  )
+)}
 
-              {/* BIG / SMALL */}
-              <span
-                className={`text-center font-semibold ${
-                  r.size === "BIG" ? "text-amber-400" : "text-sky-400"
-                }`}
-              >
-                {r.size}
-              </span>
+{/* ---------- TRADE HISTORY ---------- */}
+{historyTab === "trades" && (
+  tradeHistory.length === 0 ? (
+    <p className="text-[11px] text-slate-500">
+      No trade history yet for this game.
+    </p>
+  ) : (
+    <div className="max-h-40 overflow-auto custom-scroll space-y-1.5 pr-1">
+      {tradeHistory.map((t, idx) => (
+        <div
+          key={idx}
+          className="grid grid-cols-3 items-center bg-slate-900/80 border border-slate-800 px-2 py-2 rounded-2xl text-[11px]"
+        >
+          {/* PERIOD */}
+          <span className="font-mono text-slate-400 text-[10px] overflow-hidden text-ellipsis whitespace-nowrap">
+            {t.period}
+          </span>
 
-              {/* COLOR DOT */}
-              <span className="flex justify-center">
-                <span
-                  className={`w-3 h-3 rounded-full ${colorClass} shadow-[0_0_8px_rgba(255,255,255,0.25)]`}
-                />
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    )}
+          {/* BET */}
+          <span className="text-center text-slate-200 font-semibold">
+            {t.betKind} {t.betValue}
+          </span>
+
+          {/* RESULT */}
+          <span
+            className={`text-right font-bold ${
+              t.win ? "text-emerald-400" : "text-rose-400"
+            }`}
+          >
+            {t.win ? `+₹${t.profit}` : "LOSS"}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+)}
+
+
+
+{/* ================= TRADE HISTORY ================= */}
+{historyTab === "trades" && (
+  tradeHistory.length === 0 ? (
+    <p className="text-[11px] text-slate-500">
+      No trades yet for this game.
+    </p>
+  ) : (
+    <div className="max-h-40 overflow-auto custom-scroll space-y-1.5 pr-1">
+      {tradeHistory.map((t, idx) => (
+        <div
+          key={idx}
+          className="grid grid-cols-3 items-center bg-slate-900/80 border border-slate-800 px-2 py-2 rounded-2xl text-[11px]"
+        >
+          <span className="font-mono text-slate-400 text-[10px]">
+            {t.period}
+          </span>
+
+          <span className="text-center text-slate-200 font-semibold">
+            {t.betKind} {t.betValue}
+          </span>
+
+          <span
+            className={`text-right font-bold ${
+              t.win ? "text-emerald-400" : "text-rose-400"
+            }`}
+          >
+            {t.win ? `+₹${t.profit}` : "LOSS"}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+)}
+
+
   </div> {/* ← HISTORY PANEL END */}
 </div> {/* ← MAIN ROW (bet + history) END */}
 
