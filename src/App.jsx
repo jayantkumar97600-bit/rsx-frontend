@@ -3391,34 +3391,36 @@ function GameScreen({ user, token, onLogout, onUserUpdate, onBack }) {
   };
 
   const loadResultsHistory = async (type) => {
-    try {
-      const res = await fetch(
-        `${API_BASE}/api/game/results?gameType=${type}&limit=50`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const data = await res.json();
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/game/results?gameType=${type}&limit=50`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-      const list = Array.isArray(data)
-        ? data
-        : Array.isArray(data.results)
-        ? data.results
-        : [];
+    const data = await res.json();
 
-      setResultsHistory(
-        list.map((r) => ({
-          period: r.period,
-          number: r.resultNumber,
-          color: r.resultColor,
-          size: r.resultSize || (r.resultNumber <= 4 ? "SMALL" : "BIG"),
-        }))
-      );
-    } catch (e) {
-      console.error("results history error", e);
-      setResultsHistory([]);
-    }
-  };
+    const list = Array.isArray(data)
+      ? data
+      : Array.isArray(data.results)
+      ? data.results
+      : [];
+
+    setResultsHistory(
+      list.map((r) => ({
+        period: r.period,
+        number: r.number,      // ✅ FIX
+        color: r.color,        // ✅ FIX
+        size: r.size,          // ✅ FIX
+      }))
+    );
+  } catch (e) {
+    console.error("results history error", e);
+    setResultsHistory([]);
+  }
+};
+
 
   useEffect(() => {
     resetPeriodForGameType(gameType);
